@@ -100,6 +100,6 @@ public class SimpleBuoyancy : MonoBehaviour
         
         // Draw water level
         Gizmos.color = new Color(0, 0.5f, 1f, 0.3f);
-        Gizmos.DrawCube(new Vector3(0, waterLevel, 0), new Vector3(50, 0.1f, 50));
+        //Gizmos.DrawCube(new Vector3(0, waterLevel, 0), new Vector3(50, 0.1f, 50));
     }
 }
