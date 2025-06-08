@@ -42,33 +42,41 @@ public class SimpleBuoyancy : MonoBehaviour
         {
             wobbleTimer -= Mathf.PI * 2f;
         }
-        
+    
         // Check each buoyancy point
         isInWater = false;
-        
+    
         for (int i = 0; i < buoyancyPoints.Length; i++)
         {
             Transform point = buoyancyPoints[i];
-            
+        
             // Calculate local water level with wobble for this point
-            float localWaterLevel = GetLocalWaterLevel(point.position, i);
-            
+            float localWaterLevel = GetLocalWaterLevel(point.position);  // Remove pointIndex
+        
             if (point.position.y < localWaterLevel)
             {
                 isInWater = true;
-                
+            
                 // Calculate how deep this point is underwater
                 float depthMultiplier = (localWaterLevel - point.position.y) / 2f;
-                
-                // Add some variation to buoyancy force for natural feel
-                float wobbledBuoyancyForce = buoyancyForce + (Mathf.Sin(wobbleTimer + i) * buoyancyVariation * buoyancyForce);
-                
+            
+                // FIXED: Use same force variation for left/right pairs
+                float wobbledBuoyancyForce;
+                if (i == 0 || i == 1) // Front points get same variation
+                {
+                    wobbledBuoyancyForce = buoyancyForce + (Mathf.Sin(wobbleTimer) * buoyancyVariation * buoyancyForce);
+                }
+                else // Back points get same variation
+                {
+                    wobbledBuoyancyForce = buoyancyForce + (Mathf.Sin(wobbleTimer + 1) * buoyancyVariation * buoyancyForce);
+                }
+            
                 // Apply upward buoyancy force at this point
                 Vector3 buoyancyForceVector = Vector3.up * wobbledBuoyancyForce * depthMultiplier;
                 rb.AddForceAtPosition(buoyancyForceVector, point.position);
             }
         }
-        
+    
         // Apply water resistance when in water
         if (isInWater)
         {
@@ -77,16 +85,16 @@ public class SimpleBuoyancy : MonoBehaviour
         }
         else
         {
-            rb.linearDamping = 0.1f;          // Air resistance
-            rb.angularDamping = 0.05f;        // Minimal angular drag in air
+            rb.linearDamping = 0.1f;
+            rb.angularDamping = 0.05f;
         }
     }
 
-    float GetLocalWaterLevel(Vector3 position, int pointIndex)
+    float GetLocalWaterLevel(Vector3 position)
     {
         // Create slightly different wobble for each buoyancy point
         float baseWobble = Mathf.Sin(wobbleTimer + position.z * 0.1f) * wobbleStrength;
-        float secondaryWobble = Mathf.Cos(wobbleTimer * 0.7f + position.x * 0.1f + pointIndex) * wobbleStrength * 0.5f;
+        float secondaryWobble = Mathf.Cos(wobbleTimer * 0.7f + position.z * 0.15f) * wobbleStrength * 0.5f;
         
         return waterLevel + baseWobble + secondaryWobble;
     }
@@ -131,7 +139,7 @@ public class SimpleBuoyancy : MonoBehaviour
                     // Show local water level for this point
                     if (Application.isPlaying)
                     {
-                        float localLevel = GetLocalWaterLevel(point.position, System.Array.IndexOf(buoyancyPoints, point));
+                        float localLevel = GetLocalWaterLevel(point.position);
                         Gizmos.color = Color.blue;
                         Gizmos.DrawWireCube(new Vector3(point.position.x, localLevel, point.position.z), new Vector3(0.2f, 0.02f, 0.2f));
                         Gizmos.color = Color.cyan;
