@@ -8,11 +8,17 @@ public class SimpleBuoyancy : MonoBehaviour
     public float waterDrag = 0.5f;          // Resistance when in water
     public float waterAngularDrag = 0.8f;   // Rotational resistance
     
+    [Header("Wobble Settings")]
+    public float wobbleStrength = 0.3f;     // How much the water level varies
+    public float wobbleSpeed = 1.5f;        // How fast the wobble moves
+    public float buoyancyVariation = 0.2f;  // How much buoyancy force varies
+    
     [Header("Buoyancy Points")]
     public Transform[] buoyancyPoints;      // Points where buoyancy is calculated
     
     private Rigidbody rb;
     private bool isInWater = false;
+    private float wobbleTimer = 0f;
 
     void Start()
     {
@@ -23,24 +29,42 @@ public class SimpleBuoyancy : MonoBehaviour
         {
             CreateBuoyancyPoints();
         }
+        
+        // Start with random timer so multiple objects don't sync
+        wobbleTimer = Random.Range(0f, Mathf.PI * 2f);
     }
 
     void FixedUpdate()
     {
+        // Update wobble timer
+        wobbleTimer += Time.fixedDeltaTime * wobbleSpeed;
+        if (wobbleTimer > Mathf.PI * 2f)
+        {
+            wobbleTimer -= Mathf.PI * 2f;
+        }
+        
         // Check each buoyancy point
         isInWater = false;
         
-        foreach (Transform point in buoyancyPoints)
+        for (int i = 0; i < buoyancyPoints.Length; i++)
         {
-            if (point.position.y < waterLevel)
+            Transform point = buoyancyPoints[i];
+            
+            // Calculate local water level with wobble for this point
+            float localWaterLevel = GetLocalWaterLevel(point.position, i);
+            
+            if (point.position.y < localWaterLevel)
             {
                 isInWater = true;
                 
                 // Calculate how deep this point is underwater
-                float depthMultiplier = (waterLevel - point.position.y) / 2f;
+                float depthMultiplier = (localWaterLevel - point.position.y) / 2f;
+                
+                // Add some variation to buoyancy force for natural feel
+                float wobbledBuoyancyForce = buoyancyForce + (Mathf.Sin(wobbleTimer + i) * buoyancyVariation * buoyancyForce);
                 
                 // Apply upward buoyancy force at this point
-                Vector3 buoyancyForceVector = Vector3.up * buoyancyForce * depthMultiplier;
+                Vector3 buoyancyForceVector = Vector3.up * wobbledBuoyancyForce * depthMultiplier;
                 rb.AddForceAtPosition(buoyancyForceVector, point.position);
             }
         }
@@ -54,8 +78,17 @@ public class SimpleBuoyancy : MonoBehaviour
         else
         {
             rb.linearDamping = 0.1f;          // Air resistance
-            rb.angularDamping = 0.05f;  // Minimal angular drag in air
+            rb.angularDamping = 0.05f;        // Minimal angular drag in air
         }
+    }
+
+    float GetLocalWaterLevel(Vector3 position, int pointIndex)
+    {
+        // Create slightly different wobble for each buoyancy point
+        float baseWobble = Mathf.Sin(wobbleTimer + position.z * 0.1f) * wobbleStrength;
+        float secondaryWobble = Mathf.Cos(wobbleTimer * 0.7f + position.x * 0.1f + pointIndex) * wobbleStrength * 0.5f;
+        
+        return waterLevel + baseWobble + secondaryWobble;
     }
 
     void CreateBuoyancyPoints()
@@ -94,11 +127,20 @@ public class SimpleBuoyancy : MonoBehaviour
                 if (point != null)
                 {
                     Gizmos.DrawWireSphere(point.position, 0.1f);
+                    
+                    // Show local water level for this point
+                    if (Application.isPlaying)
+                    {
+                        float localLevel = GetLocalWaterLevel(point.position, System.Array.IndexOf(buoyancyPoints, point));
+                        Gizmos.color = Color.blue;
+                        Gizmos.DrawWireCube(new Vector3(point.position.x, localLevel, point.position.z), new Vector3(0.2f, 0.02f, 0.2f));
+                        Gizmos.color = Color.cyan;
+                    }
                 }
             }
         }
         
-        // Draw water level
+        // Draw base water level
         Gizmos.color = new Color(0, 0.5f, 1f, 0.3f);
         //Gizmos.DrawCube(new Vector3(0, waterLevel, 0), new Vector3(50, 0.1f, 50));
     }
