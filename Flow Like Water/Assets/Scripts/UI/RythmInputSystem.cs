@@ -13,7 +13,10 @@ public class RhythmInputSystem : MonoBehaviour
     public float lookAheadTime = 2f;
     public float promptInterval = 0.8f;
     
+    [Header("Input Settings")] public float combinationWindow = 0.2f; // Time window for key combinations
+    private Dictionary<KeyCode, float> keyPressTimes = new Dictionary<KeyCode, float>();  
     private List<InputPrompt> activePrompts = new List<InputPrompt>();
+    
     private float lastPromptTime;
     
     void Update()
@@ -58,38 +61,61 @@ public class RhythmInputSystem : MonoBehaviour
     
     void HandleInput()
     {
-        // Rowing
-        if (Input.GetKeyDown(KeyCode.Z) && Input.GetKeyDown(KeyCode.P))
+        // Check for key combinations with a small timing window
+        CheckInputCombination(KeyCode.Z, KeyCode.P, EInputType.StraightLeft);
+        CheckInputCombination(KeyCode.C, KeyCode.I, EInputType.StraightRight);
+        CheckInputCombination(KeyCode.C, KeyCode.P, EInputType.Left);
+        CheckInputCombination(KeyCode.Z, KeyCode.I, EInputType.Right);
+    
+        // Hard turns - hold first key, press second
+        CheckHoldAndPress(KeyCode.Z, KeyCode.P, EInputType.LeftHard);
+        CheckHoldAndPress(KeyCode.C, KeyCode.I, EInputType.RightHard);
+    }
+
+    void CheckInputCombination(KeyCode key1, KeyCode key2, EInputType inputType)
+    {
+        // Track when keys are pressed
+        if (Input.GetKeyDown(key1))
+            keyPressTimes[key1] = Time.time;
+        if (Input.GetKeyDown(key2))
+            keyPressTimes[key2] = Time.time;
+    
+        // Check if both keys were pressed within the time window
+        if (keyPressTimes.ContainsKey(key1) && keyPressTimes.ContainsKey(key2))
         {
-            CheckInput(EInputType.StraightLeft);
+            float timeDiff = Mathf.Abs(keyPressTimes[key1] - keyPressTimes[key2]);
+            if (timeDiff <= combinationWindow)
+            {
+                CheckInput(inputType);
+                // Clear the tracked times to prevent repeated triggers
+                keyPressTimes.Remove(key1);
+                keyPressTimes.Remove(key2);
+            }
         }
-        // Rowing
-        if (Input.GetKeyDown(KeyCode.C) && Input.GetKeyDown(KeyCode.I))
+    
+        // Clean up old key presses
+        CleanupOldKeyPresses();
+    }
+
+    void CheckHoldAndPress(KeyCode holdKey, KeyCode pressKey, EInputType inputType)
+    {
+        if (Input.GetKey(holdKey) && Input.GetKeyDown(pressKey))
         {
-            CheckInput(EInputType.StraightRight);
+            CheckInput(inputType);
         }
-        
-        // Turning left
-        if (Input.GetKeyDown(KeyCode.C) && Input.GetKeyDown(KeyCode.P))
+    }
+
+    void CleanupOldKeyPresses()
+    {
+        var keysToRemove = new List<KeyCode>();
+        foreach (var kvp in keyPressTimes)
         {
-            CheckInput(EInputType.Left);
+            if (Time.time - kvp.Value > combinationWindow)
+                keysToRemove.Add(kvp.Key);
         }
-        // Turning right
-        if (Input.GetKeyDown(KeyCode.Z) && Input.GetKeyDown(KeyCode.I))
-        {
-            CheckInput(EInputType.Right);
-        }
-        
-        // Turning left hard
-        if (Input.GetKey(KeyCode.Z) && Input.GetKeyDown(KeyCode.P))
-        {
-            CheckInput(EInputType.LeftHard);
-        }
-        // Turning right hard
-        if (Input.GetKeyDown(KeyCode.C) && Input.GetKeyDown(KeyCode.P))
-        {
-            CheckInput(EInputType.RightHard);
-        }
+    
+        foreach (var key in keysToRemove)
+            keyPressTimes.Remove(key);
     }
     
     void CheckInput(EInputType inputType)
