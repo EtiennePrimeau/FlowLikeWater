@@ -15,11 +15,18 @@ public class CanoeController : MonoBehaviour
     
     private int currentPointIndex = 0;
     
+    [Header("Rotation Alignment (Read-Only)")]
+    public float rotationDirection; // -1 = opposite direction, 0 = perpendicular, 1 = perfect alignment
+    public bool isRotatingRight;    // Which way we're turning
+    
     void Update()
     {
         if (points.Count == 0) return;
         
         Vector3 currentTarget = points[currentPointIndex].position;
+        
+        // Calculate how aligned we are with target direction
+        CalculateRotationAlignment(currentTarget);
         
         // Rotate toward current point
         RotateToward(currentTarget);
@@ -29,6 +36,34 @@ public class CanoeController : MonoBehaviour
         if (distance <= arrivalDistance)
         {
             GoToNextPoint();
+        }
+        
+        GuiDebug.Instance.PrintFloat("rotationDirection", rotationDirection);
+    }
+    
+    void CalculateRotationAlignment(Vector3 target)
+    {
+        Vector3 directionToTarget = target - transform.position;
+        directionToTarget.y = 0f; // Keep horizontal
+        
+        if (directionToTarget.magnitude > 0.1f)
+        {
+            // Normalize both vectors for dot product
+            Vector3 forwardDirection = transform.forward;
+            forwardDirection.y = 0f;
+            
+            Vector3 targetDirection = directionToTarget.normalized;
+            
+            // Dot product gives us alignment: 1 = same direction, -1 = opposite, 0 = perpendicular
+            rotationDirection = Vector3.Dot(forwardDirection.normalized, targetDirection);
+            
+            // Still calculate which way we're turning for other systems that might need it
+            float signedAngle = Vector3.SignedAngle(forwardDirection, targetDirection, Vector3.up);
+            isRotatingRight = signedAngle < 0f;
+        }
+        else
+        {
+            rotationDirection = 1f; // We're at the target, so we're "aligned"
         }
     }
     
@@ -77,6 +112,14 @@ public class CanoeController : MonoBehaviour
             // Draw line to current target
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, points[currentPointIndex].position);
+            
+            // Visual indicator of alignment using color intensity
+            float alignmentStrength = Mathf.Abs(rotationDirection);
+            Color alignmentColor = Color.Lerp(Color.red, Color.green, (rotationDirection + 1f) / 2f);
+            alignmentColor.a = alignmentStrength;
+            
+            Gizmos.color = alignmentColor;
+            Gizmos.DrawWireCube(transform.position + Vector3.up * 2f, Vector3.one * alignmentStrength);
         }
     }
 }
