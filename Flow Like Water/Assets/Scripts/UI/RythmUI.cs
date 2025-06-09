@@ -6,60 +6,100 @@ using System.Collections;
 public class RhythmUI : MonoBehaviour
 {
     [Header("UI Elements")]
-    public Transform promptContainer;
+    public Transform promptLeftContainer;
+    public Transform promptRightContainer;
     public GameObject promptPrefab;
     public TextMeshProUGUI feedbackText;
     
-    [Header("Settings")]
-    public float fallTime = 2f;
+    [Header("Visual Settings")]
+    public float fallSpeed = 150f; // Units per second
+    public Transform targetZoneVisual; // Optional: visual indicator for target zone
     
     public void ShowPrompt(InputPrompt prompt)
     {
-        GameObject promptObj = Instantiate(promptPrefab, promptContainer);
-        SetupPrompt(promptObj, prompt);
-        StartCoroutine(AnimatePrompt(promptObj));
+        if (prompt.inputType == EInputType.LeftHard ||
+            prompt.inputType == EInputType.RightHard)
+        {
+            Debug.Log("Hard Turn return");
+            return;
+        }
+        
+        if (prompt.inputType == EInputType.Left ||
+            prompt.inputType == EInputType.Right)
+        {
+            bool isLeft = prompt.inputType == EInputType.Left;
+            
+            GameObject promptObj1 = Instantiate(promptPrefab, 
+                isLeft  ? promptLeftContainer : promptRightContainer);
+            GameObject promptObj2 = Instantiate(promptPrefab, 
+                isLeft  ? promptLeftContainer : promptRightContainer);
+            SetupPrompt(promptObj1, promptObj2, prompt);
+            StartCoroutine(AnimatePrompt(promptObj1, prompt));
+            StartCoroutine(AnimatePrompt(promptObj2, prompt));
+        }
+        else
+        {
+            GameObject promptObjL = Instantiate(promptPrefab, promptLeftContainer);
+            GameObject promptObjR = Instantiate(promptPrefab, promptRightContainer);
+            SetupPrompt(promptObjL, promptObjR, prompt);
+            StartCoroutine(AnimatePrompt(promptObjL, prompt));
+            StartCoroutine(AnimatePrompt(promptObjR, prompt));
+        }
+        
+        
     }
     
-    void SetupPrompt(GameObject promptObj, InputPrompt prompt)
+    void SetupPrompt(GameObject promptObjLeft, GameObject promptObjRight, InputPrompt prompt)
     {
-        TextMeshProUGUI text = promptObj.GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI textL = promptObjLeft.GetComponentInChildren<TextMeshProUGUI>();
+        TextMeshProUGUI textR = promptObjRight.GetComponentInChildren<TextMeshProUGUI>();
         
         switch (prompt.inputType)
         {
             case EInputType.StraightLeft:
-                if (text)
+                if (textL && textR)
                 {
-                    text.text = "ZP";
-                    text.color = Color.blue;
+                    textL.text = "Z";
+                    textR.text = "P";
+                    textL.color = Color.blue;
+                    textR.color = Color.blue;
                 }
                 break;
             case EInputType.StraightRight:
-                if (text)
+                if (textL && textR)
                 {
-                    text.text = "CI";
-                    text.color = Color.blue;
+                    textL.text = "C";
+                    textR.text = "I";
+                    textL.color = Color.blue;
+                    textR.color = Color.blue;
                 }
                 break;
             case EInputType.Left:
-                if (text)
+                if (textL && textR)
                 {
-                    text.text = "ZI";
-                    text.color = Color.green;
+                    textL.text = "C";
+                    textR.text = "P";
+                    textL.color = Color.green;
+                    textR.color = Color.green;
                 }
                 break;
             case EInputType.Right:
-                if (text)
+                if (textL && textR)
                 {
-                    text.text = "CP";
-                    text.color = Color.green;
+                    textL.text = "Z";
+                    textR.text = "I";
+                    textL.color = Color.yellow;
+                    textR.color = Color.yellow;
                 }
                 break;
             case EInputType.LeftHard:
             case EInputType.RightHard:
-                if (text)
+                if (textL && textR)
                 {
-                    text.text = "ZC";
-                    text.color = Color.red;
+                    textL.text = "Z";
+                    textR.text = "C";
+                    textL.color = Color.red;
+                    textR.color = Color.red;
                 }
 
                 break;
@@ -67,21 +107,31 @@ public class RhythmUI : MonoBehaviour
         }
     }
     
-    IEnumerator AnimatePrompt(GameObject promptObj)
+    IEnumerator AnimatePrompt(GameObject promptObj, InputPrompt prompt)
     {
         RectTransform rect = promptObj.GetComponent<RectTransform>();
-        Vector3 startPos = new Vector3(0f, 300f, 0f);
-        Vector3 endPos = new Vector3(0f, -300f, 0f);
         
-        float elapsed = 0f;
-        while (elapsed < fallTime)
+        // Set initial position
+        prompt.currentPosition = prompt.spawnPosition;
+        rect.anchoredPosition = WorldToScreenPoint(prompt.spawnPosition);
+        
+        while (prompt.isActive && prompt.currentPosition.y > prompt.targetPosition.y - 200f)
         {
-            elapsed += Time.deltaTime;
-            rect.anchoredPosition = Vector3.Lerp(startPos, endPos, elapsed / fallTime);
+            // Move prompt down
+            prompt.currentPosition += Vector3.down * fallSpeed * Time.deltaTime;
+            rect.anchoredPosition = WorldToScreenPoint(prompt.currentPosition);
+            
             yield return null;
         }
         
         Destroy(promptObj);
+    }
+    
+    Vector2 WorldToScreenPoint(Vector3 worldPos)
+    {
+        // Convert 3D world position to 2D screen position
+        // You might need to adjust this based on your camera setup
+        return new Vector2(0f, worldPos.y - 200f); // Simple Y-axis mapping
     }
     
     public void ShowFeedback(string message)

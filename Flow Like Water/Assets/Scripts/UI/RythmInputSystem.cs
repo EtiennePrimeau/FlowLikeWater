@@ -9,15 +9,19 @@ public class RhythmInputSystem : MonoBehaviour
     [Header("References")]
     public CanoeController canoe;
     public RhythmUI rhythmUI;
+    public Transform targetZone; // The zone where timing is perfect
     
-    [Header("Settings")]
-    public float lookAheadTime = 2f;
+    [Header("Position Settings")]
+    public float spawnDistance = 300f;     // How far above target zone prompts spawn
     public float promptInterval = 0.8f;
+    public float perfectZoneSize = 50f;    // Size of perfect timing zone
+    public float goodZoneSize = 100f;      // Size of good timing zone
     
-    [Header("Input Settings")] public float combinationWindow = 0.2f; // Time window for key combinations
+    [Header("Input Settings")]
+    public float combinationWindow = 0.2f;
+    
     private Dictionary<KeyCode, float> keyPressTimes = new Dictionary<KeyCode, float>();  
     private List<InputPrompt> activePrompts = new List<InputPrompt>();
-    
     private float lastPromptTime;
     
     void Update()
@@ -35,11 +39,21 @@ public class RhythmInputSystem : MonoBehaviour
         
         InputPrompt prompt = new InputPrompt();
         prompt.inputType = GetInputTypeFromCurrentState();
-        prompt.hitTime = Time.time + lookAheadTime;
+        prompt.targetPosition = GetTargetZonePosition();
+        prompt.spawnPosition = prompt.targetPosition + Vector3.up * spawnDistance;
         
         activePrompts.Add(prompt);
         rhythmUI.ShowPrompt(prompt);
         lastPromptTime = Time.time;
+    }
+    
+    Vector3 GetTargetZonePosition()
+    {
+        if (targetZone != null)
+            return targetZone.position;
+        
+        // Fallback: use canoe position with offset
+        return canoe.transform.position + Vector3.up * 2f;
     }
 
     EInputType GetInputTypeFromCurrentState()
@@ -56,45 +70,38 @@ public class RhythmInputSystem : MonoBehaviour
             default:
                 Debug.LogError("Unknown state: " + canoe.CurrentState);
                 return EInputType.StraightLeft;
-            
         }
     }
     
     void HandleInput()
     {
-        // Check for key combinations with a small timing window
         CheckInputCombination(KeyCode.Z, KeyCode.P, EInputType.StraightLeft);
         CheckInputCombination(KeyCode.C, KeyCode.I, EInputType.StraightRight);
         CheckInputCombination(KeyCode.C, KeyCode.P, EInputType.Left);
         CheckInputCombination(KeyCode.Z, KeyCode.I, EInputType.Right);
-    
-        // Hard turns - hold first key, press second
+        
         CheckHoldAndPress(KeyCode.Z, KeyCode.P, EInputType.LeftHard);
         CheckHoldAndPress(KeyCode.C, KeyCode.I, EInputType.RightHard);
     }
 
     void CheckInputCombination(KeyCode key1, KeyCode key2, EInputType inputType)
     {
-        // Track when keys are pressed
         if (Input.GetKeyDown(key1))
             keyPressTimes[key1] = Time.time;
         if (Input.GetKeyDown(key2))
             keyPressTimes[key2] = Time.time;
-    
-        // Check if both keys were pressed within the time window
+
         if (keyPressTimes.ContainsKey(key1) && keyPressTimes.ContainsKey(key2))
         {
             float timeDiff = Mathf.Abs(keyPressTimes[key1] - keyPressTimes[key2]);
             if (timeDiff <= combinationWindow)
             {
                 CheckInput(inputType);
-                // Clear the tracked times to prevent repeated triggers
                 keyPressTimes.Remove(key1);
                 keyPressTimes.Remove(key2);
             }
         }
-    
-        // Clean up old key presses
+        
         CleanupOldKeyPresses();
     }
 
@@ -114,7 +121,7 @@ public class RhythmInputSystem : MonoBehaviour
             if (Time.time - kvp.Value > combinationWindow)
                 keysToRemove.Add(kvp.Key);
         }
-    
+        
         foreach (var key in keysToRemove)
             keyPressTimes.Remove(key);
     }
@@ -122,35 +129,65 @@ public class RhythmInputSystem : MonoBehaviour
     void CheckInput(EInputType inputType)
     {
         Debug.Log("Checking input: " + inputType);
-        float timeDiff = 0;
+        
+        InputPrompt closestPrompt = null;
+        float closestDistance = float.MaxValue;
+        
+        // Find the closest prompt of the right type to the target zone
         foreach (var prompt in activePrompts)
         {
             if (prompt.inputType == inputType && prompt.isActive)
             {
-                timeDiff = Time.time - prompt.hitTime;
-                if (Mathf.Abs(timeDiff) < 0.3f)
+                float distance = Vector3.Distance(prompt.currentPosition, prompt.targetPosition);
+                if (distance < closestDistance)
                 {
-                    string feedback = timeDiff < 0.1f ? "PERFECT!" : "GOOD!";
-                    rhythmUI.ShowFeedback(feedback + " " + (float)Math.Round(timeDiff, 2));
-                    prompt.isActive = false;
-                    return;
+                    closestDistance = distance;
+                    closestPrompt = prompt;
                 }
             }
         }
-        rhythmUI.ShowFeedback("MISS " + (float)Math.Round(timeDiff, 2));
+        
+        if (closestPrompt != null)
+        {
+            string feedback;
+            if (closestDistance <= perfectZoneSize)
+            {
+                feedback = "PERFECT!";
+                rhythmUI.ShowFeedback(feedback + " " + closestDistance.ToString("F1"));
+            }
+            else if (closestDistance <= goodZoneSize)
+            {
+                feedback = "GOOD!";
+                rhythmUI.ShowFeedback(feedback + " " + closestDistance.ToString("F1"));
+            }
+            else
+            {
+                feedback = "MISS";
+                rhythmUI.ShowFeedback(feedback + " " + closestDistance.ToString("F1"));
+                return; // Don't remove the prompt for misses
+            }
+            
+            closestPrompt.isActive = false;
+        }
+        else
+        {
+            rhythmUI.ShowFeedback("NO PROMPT");
+        }
     }
     
     void CleanupPrompts()
     {
-        activePrompts.RemoveAll(p => Time.time > p.hitTime + 0.5f);
+        // Remove prompts that have passed too far below the target zone
+        activePrompts.RemoveAll(p => p.currentPosition.y < p.targetPosition.y - goodZoneSize);
     }
 }
-
 
 [System.Serializable]
 public class InputPrompt
 {
     public EInputType inputType;
-    public float hitTime;
+    public Vector3 targetPosition;   // Where perfect timing occurs
+    public Vector3 spawnPosition;    // Where prompt starts
+    public Vector3 currentPosition;  // Current position (updated by UI)
     public bool isActive = true;
 }
