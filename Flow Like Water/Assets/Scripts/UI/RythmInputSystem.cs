@@ -94,6 +94,7 @@ public class RhythmInputSystem : MonoBehaviour
     
     void CheckInput(EInputType inputType)
     {
+        Debug.Log("Checking input: " + inputType);
         foreach (var prompt in activePrompts)
         {
             if (prompt.inputType == inputType && prompt.isActive)
