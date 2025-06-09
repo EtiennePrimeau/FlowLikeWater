@@ -51,29 +51,31 @@ public class InputController : MonoBehaviour
         
         Vector2 direction2D = Vector2.zero;
         // Front left
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W))
         {
             direction2D += Vector2.up;
         }
         // Front right
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S))
         {
             direction2D -= Vector2.up;
         }
         // Back left
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A))
         {
             direction2D += Vector2.left;
         }
         // Back right
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D))
         {
             direction2D += Vector2.right;
         }
         
         Vector3 direction = new Vector3(direction2D.x, 0f, direction2D.y);
+        //Vector3 direction = new Vector3(direction2D.x, 0f, 0f);
         
-        GetComponent<Rigidbody>().AddForce(direction * _force);
+        //GetComponent<Rigidbody>().AddForce(direction * _force);
+        GetComponent<Rigidbody>().AddForce(direction * _force, ForceMode.Impulse);
         
         
         
