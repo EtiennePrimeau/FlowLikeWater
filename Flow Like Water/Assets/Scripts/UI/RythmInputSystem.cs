@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
 
+public enum EInputType { Left, Right, LeftHard, RightHard, StraightLeft, StraightRight }
 
 public class RhythmInputSystem : MonoBehaviour
 {
@@ -9,185 +9,119 @@ public class RhythmInputSystem : MonoBehaviour
     public CanoeController canoe;
     public RhythmUI rhythmUI;
     
-    [Header("Timing Settings")]
-    public float lookAheadTime = 2f;        // How far ahead to generate prompts
-    public float promptInterval = 0.5f;     // How often to check for new prompts
-    
-    [Header("Input Mapping")]
-    public KeyCode leftPaddleKey = KeyCode.A;
-    public KeyCode rightPaddleKey = KeyCode.D;
-    public KeyCode syncKey = KeyCode.S;
-    public KeyCode powerKey = KeyCode.Space;
+    [Header("Settings")]
+    public float lookAheadTime = 2f;
+    public float promptInterval = 0.8f;
     
     private List<InputPrompt> activePrompts = new List<InputPrompt>();
     private float lastPromptTime;
-    private ECanoeState lastState = ECanoeState.straight;
     
     void Update()
     {
-        if (canoe == null || rhythmUI == null) return;
+        if (canoe == null) return;
         
-        // Generate new prompts based on canoe state
         GeneratePrompts();
-        
-        // Handle player input
         HandleInput();
-        
-        // Update active prompts
-        UpdatePrompts();
+        CleanupPrompts();
     }
     
     void GeneratePrompts()
     {
         if (Time.time - lastPromptTime < promptInterval) return;
         
-        ECanoeState currentState = canoe.CurrentState;
+        InputPrompt prompt = new InputPrompt();
+        prompt.inputType = GetInputTypeFromCurrentState();
+        prompt.hitTime = Time.time + lookAheadTime;
         
-        // Generate prompts based on state changes or continued states
-        if (currentState != lastState || ShouldGenerateContinuousPrompt(currentState))
-        {
-            InputPrompt newPrompt = CreatePromptForState(currentState);
-            if (newPrompt != null)
-            {
-                activePrompts.Add(newPrompt);
-                rhythmUI.ShowInputPrompt(newPrompt);
-                lastPromptTime = Time.time;
-            }
-        }
-        
-        lastState = currentState;
+        activePrompts.Add(prompt);
+        rhythmUI.ShowPrompt(prompt);
+        lastPromptTime = Time.time;
     }
-    
-    bool ShouldGenerateContinuousPrompt(ECanoeState state)
+
+    EInputType GetInputTypeFromCurrentState()
     {
-        // Generate continuous prompts for turning states
-        return state == ECanoeState.turning || state == ECanoeState.hardTurning;
-    }
-    
-    InputPrompt CreatePromptForState(ECanoeState state)
-    {
-        switch (state)
+        bool isRight = canoe.isRotatingRight;
+        switch (canoe.CurrentState)
         {
             case ECanoeState.straight:
-                return new InputPrompt(EInputType.Sync, Time.time + lookAheadTime);
-                
+                return isRight ? EInputType.StraightRight : EInputType.StraightLeft;
             case ECanoeState.turning:
-                // Choose left or right based on canoe's turning direction
-                EInputType turnType = canoe.isRotatingRight ? EInputType.RightPaddle : EInputType.LeftPaddle;
-                return new InputPrompt(turnType, Time.time + lookAheadTime);
-                
+                return isRight ? EInputType.Right : EInputType.Left;
             case ECanoeState.hardTurning:
-                return new InputPrompt(EInputType.Power, Time.time + lookAheadTime);
-                
+                return isRight ? EInputType.RightHard : EInputType.LeftHard;
             default:
-                return null;
+                Debug.LogError("Unknown state: " + canoe.CurrentState);
+                return EInputType.StraightLeft;
+            
         }
     }
     
     void HandleInput()
     {
-        if (Input.GetKeyDown(leftPaddleKey))
-            ProcessInput(EInputType.LeftPaddle);
-        if (Input.GetKeyDown(rightPaddleKey))
-            ProcessInput(EInputType.RightPaddle);
-        if (Input.GetKeyDown(syncKey))
-            ProcessInput(EInputType.Sync);
-        if (Input.GetKeyDown(powerKey))
-            ProcessInput(EInputType.Power);
+        // Rowing
+        if (Input.GetKeyDown(KeyCode.Z) && Input.GetKeyDown(KeyCode.P))
+        {
+            CheckInput(EInputType.StraightLeft);
+        }
+        // Rowing
+        if (Input.GetKeyDown(KeyCode.C) && Input.GetKeyDown(KeyCode.I))
+        {
+            CheckInput(EInputType.StraightRight);
+        }
+        
+        // Turning left
+        if (Input.GetKeyDown(KeyCode.C) && Input.GetKeyDown(KeyCode.P))
+        {
+            CheckInput(EInputType.Left);
+        }
+        // Turning right
+        if (Input.GetKeyDown(KeyCode.Z) && Input.GetKeyDown(KeyCode.I))
+        {
+            CheckInput(EInputType.Right);
+        }
+        
+        // Turning left hard
+        if (Input.GetKey(KeyCode.Z) && Input.GetKeyDown(KeyCode.P))
+        {
+            CheckInput(EInputType.LeftHard);
+        }
+        // Turning right hard
+        if (Input.GetKeyDown(KeyCode.C) && Input.GetKeyDown(KeyCode.P))
+        {
+            CheckInput(EInputType.RightHard);
+        }
     }
     
-    void ProcessInput(EInputType inputType)
+    void CheckInput(EInputType inputType)
     {
-        InputPrompt bestMatch = null;
-        float bestScore = float.MaxValue;
-        
-        // Find the closest matching prompt
         foreach (var prompt in activePrompts)
         {
             if (prompt.inputType == inputType && prompt.isActive)
             {
-                float timeDiff = Mathf.Abs(Time.time - prompt.timing);
-                if (timeDiff < bestScore)
+                float timeDiff = Mathf.Abs(Time.time - prompt.hitTime);
+                if (timeDiff < 0.3f)
                 {
-                    bestScore = timeDiff;
-                    bestMatch = prompt;
+                    string feedback = timeDiff < 0.1f ? "PERFECT!" : "GOOD!";
+                    rhythmUI.ShowFeedback(feedback);
+                    prompt.isActive = false;
+                    return;
                 }
             }
         }
-        
-        if (bestMatch != null)
-        {
-            ScoreInput(bestMatch, bestScore);
-            bestMatch.isActive = false;
-            rhythmUI.HideInputPrompt(bestMatch);
-        }
+        rhythmUI.ShowFeedback("MISS");
     }
     
-    void ScoreInput(InputPrompt prompt, float timeDiff)
+    void CleanupPrompts()
     {
-        string result;
-        if (timeDiff <= prompt.perfectWindow)
-        {
-            result = "PERFECT!";
-            rhythmUI.ShowFeedback(result, Color.yellow);
-        }
-        else if (timeDiff <= prompt.goodWindow)
-        {
-            result = "GOOD!";
-            rhythmUI.ShowFeedback(result, Color.green);
-        }
-        else
-        {
-            result = "MISS";
-            rhythmUI.ShowFeedback(result, Color.red);
-        }
-        
-        Debug.Log($"Input: {prompt.inputType} - {result} (diff: {timeDiff:F3}s)");
-    }
-    
-    void UpdatePrompts()
-    {
-        // Remove expired prompts
-        for (int i = activePrompts.Count - 1; i >= 0; i--)
-        {
-            var prompt = activePrompts[i];
-            if (Time.time > prompt.timing + prompt.goodWindow)
-            {
-                if (prompt.isActive)
-                {
-                    rhythmUI.ShowFeedback("MISS", Color.red);
-                    rhythmUI.HideInputPrompt(prompt);
-                }
-                activePrompts.RemoveAt(i);
-            }
-        }
+        activePrompts.RemoveAll(p => Time.time > p.hitTime + 0.5f);
     }
 }
 
-
-public enum EInputType 
-{ 
-    LeftPaddle,    // For turning left
-    RightPaddle,   // For turning right
-    Sync,          // For staying straight
-    Power          // For hard turns
-}
 
 [System.Serializable]
 public class InputPrompt
 {
     public EInputType inputType;
-    public float timing;           // When to show the prompt (seconds ahead)
-    public float perfectWindow;    // Perfect timing window
-    public float goodWindow;       // Good timing window
-    public bool isActive;
-    
-    public InputPrompt(EInputType type, float time)
-    {
-        inputType = type;
-        timing = time;
-        perfectWindow = 0.1f;
-        goodWindow = 0.3f;
-        isActive = true;
-    }
+    public float hitTime;
+    public bool isActive = true;
 }

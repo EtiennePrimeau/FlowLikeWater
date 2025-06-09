@@ -1,130 +1,101 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections.Generic;
 using System.Collections;
 
 public class RhythmUI : MonoBehaviour
 {
     [Header("UI Elements")]
-    public Transform promptContainer;     // Parent for input prompts
-    public GameObject promptPrefab;       // Prefab for input prompts
-    public TextMeshProUGUI feedbackText;  // For showing PERFECT/GOOD/MISS
+    public Transform promptContainer;
+    public GameObject promptPrefab;
+    public TextMeshProUGUI feedbackText;
     
-    [Header("Animation Settings")]
-    public float promptTravelTime = 2f;   // How long prompts take to reach target
-    public float feedbackDuration = 1f;   // How long feedback shows
+    [Header("Settings")]
+    public float fallTime = 2f;
     
-    private Dictionary<InputPrompt, GameObject> activePromptObjects = new Dictionary<InputPrompt, GameObject>();
-    
-    public void ShowInputPrompt(InputPrompt prompt)
+    public void ShowPrompt(InputPrompt prompt)
     {
-        if (promptPrefab == null || promptContainer == null) return;
-        
         GameObject promptObj = Instantiate(promptPrefab, promptContainer);
-        activePromptObjects[prompt] = promptObj;
-        
-        // Setup prompt visuals based on input type
-        SetupPromptVisuals(promptObj, prompt.inputType);
-        
-        // Start animation
-        StartCoroutine(AnimatePrompt(promptObj, prompt));
+        SetupPrompt(promptObj, prompt);
+        StartCoroutine(AnimatePrompt(promptObj));
     }
     
-    void SetupPromptVisuals(GameObject promptObj, EInputType inputType)
+    void SetupPrompt(GameObject promptObj, InputPrompt prompt)
     {
         Image image = promptObj.GetComponent<Image>();
         TextMeshProUGUI text = promptObj.GetComponentInChildren<TextMeshProUGUI>();
         
-        if (image != null)
+        switch (prompt.inputType)
         {
-            switch (inputType)
-            {
-                case EInputType.LeftPaddle:
-                    image.color = Color.blue;
-                    break;
-                case EInputType.RightPaddle:
-                    image.color = Color.red;
-                    break;
-                case EInputType.Sync:
-                    image.color = Color.green;
-                    break;
-                case EInputType.Power:
-                    image.color = Color.yellow;
-                    break;
-            }
-        }
-        
-        if (text != null)
-        {
-            switch (inputType)
-            {
-                case EInputType.LeftPaddle:
-                    text.text = "A";
-                    break;
-                case EInputType.RightPaddle:
-                    text.text = "D";
-                    break;
-                case EInputType.Sync:
-                    text.text = "S";
-                    break;
-                case EInputType.Power:
-                    text.text = "SPACE";
-                    break;
-            }
+            case EInputType.StraightLeft:
+                if (text)
+                {
+                    text.text = "ZP";
+                    text.color = Color.blue;
+                }
+                break;
+            case EInputType.StraightRight:
+                if (text)
+                {
+                    text.text = "CI";
+                    text.color = Color.blue;
+                }
+                break;
+            case EInputType.Left:
+                if (text)
+                {
+                    text.text = "ZI";
+                    text.color = Color.green;
+                }
+                break;
+            case EInputType.Right:
+                if (text)
+                {
+                    text.text = "CP";
+                    text.color = Color.green;
+                }
+                break;
+            case EInputType.LeftHard:
+            case EInputType.RightHard:
+                if (text)
+                {
+                    text.text = "ZC";
+                    text.color = Color.red;
+                }
+
+                break;
+
         }
     }
     
-    IEnumerator AnimatePrompt(GameObject promptObj, InputPrompt prompt)
+    IEnumerator AnimatePrompt(GameObject promptObj)
     {
         RectTransform rect = promptObj.GetComponent<RectTransform>();
-    
-        // Start position (top of screen)
-        Vector3 startPos = new Vector3(0f, 400f, 0f);
-        // End position (bottom target zone)
-        Vector3 endPos = new Vector3(0f, -200f, 0f);
-    
-        rect.anchoredPosition = startPos;
-    
+        Vector3 startPos = new Vector3(0f, 300f, 0f);
+        Vector3 endPos = new Vector3(0f, -300f, 0f);
+        
         float elapsed = 0f;
-        while (elapsed < promptTravelTime)
+        while (elapsed < fallTime)
         {
             elapsed += Time.deltaTime;
-            float progress = elapsed / promptTravelTime;
-        
-            rect.anchoredPosition = Vector3.Lerp(startPos, endPos, progress);
-        
+            rect.anchoredPosition = Vector3.Lerp(startPos, endPos, elapsed / fallTime);
             yield return null;
         }
-    }
-
-    
-    public void HideInputPrompt(InputPrompt prompt)
-    {
-        if (activePromptObjects.TryGetValue(prompt, out GameObject promptObj))
-        {
-            if (promptObj != null)
-                Destroy(promptObj);
-            activePromptObjects.Remove(prompt);
-        }
+        
+        Destroy(promptObj);
     }
     
-    public void ShowFeedback(string message, Color color)
+    public void ShowFeedback(string message)
     {
         if (feedbackText != null)
-        {
-            StartCoroutine(ShowFeedbackCoroutine(message, color));
-        }
+            StartCoroutine(ShowFeedbackCoroutine(message));
     }
     
-    IEnumerator ShowFeedbackCoroutine(string message, Color color)
+    IEnumerator ShowFeedbackCoroutine(string message)
     {
         feedbackText.text = message;
-        feedbackText.color = color;
         feedbackText.gameObject.SetActive(true);
-        
-        yield return new WaitForSeconds(feedbackDuration);
-        
+        yield return new WaitForSeconds(0.8f);
         feedbackText.gameObject.SetActive(false);
     }
 }
