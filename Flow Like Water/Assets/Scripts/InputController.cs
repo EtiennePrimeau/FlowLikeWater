@@ -79,10 +79,10 @@ public class InputController : MonoBehaviour
         
         
         
-        GuiDebug.Instance.PrintString("FL", _frontLeft.ToString());
-        GuiDebug.Instance.PrintString("FR", _frontRight.ToString());
-        GuiDebug.Instance.PrintString("BL", _backLeft.ToString());
-        GuiDebug.Instance.PrintString("BR", _backRight.ToString());
+        //GuiDebug.Instance.PrintString("FL", _frontLeft.ToString());
+        //GuiDebug.Instance.PrintString("FR", _frontRight.ToString());
+        //GuiDebug.Instance.PrintString("BL", _backLeft.ToString());
+        //GuiDebug.Instance.PrintString("BR", _backRight.ToString());
         
     }
 }

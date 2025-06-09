@@ -4,6 +4,7 @@ public class CameraController : MonoBehaviour
 {
     [Header("Follow Settings")]
     public Transform target;
+    public CanoeController canoe;
     public Vector3 offset = new Vector3(0, 5, -8);
     
     [Header("Smoothing")]
@@ -20,23 +21,26 @@ public class CameraController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (target == null) return;
+        if (canoe == null) return;
         
         Vector3 currentOffset = offset;
         
         // Adjust offset based on target velocity (optional)
         if (adjustOffsetByVelocity)
         {
-            Rigidbody targetRb = target.GetComponent<Rigidbody>();
+            Rigidbody targetRb = canoe.GetComponent<Rigidbody>();
             if (targetRb != null)
             {
                 Vector3 velocityOffset = targetRb.linearVelocity * velocityInfluence;
                 currentOffset += new Vector3(0, 0, -velocityOffset.magnitude);
             }
         }
+
         
         // Smooth position
-        Vector3 desiredPosition = target.position + currentOffset;
+        //Vector3 desiredPosition = canoe.transform.position + currentOffset;
+        Vector3 rotatedOffset = canoe.transform.TransformDirection(currentOffset);
+        Vector3 desiredPosition = canoe.transform.position + rotatedOffset;
         transform.position = Vector3.SmoothDamp(
             transform.position, 
             desiredPosition, 
@@ -46,12 +50,13 @@ public class CameraController : MonoBehaviour
         );
         
         // Smooth rotation to look at target
-        Vector3 direction = (target.position - transform.position).normalized;
+        Vector3 direction = (canoe.CurrentTarget - transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(
             transform.rotation, 
             targetRotation, 
             Time.deltaTime / rotationSmoothTime
         );
+
     }
 }

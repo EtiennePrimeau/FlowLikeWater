@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+public enum ECanoeState { straight, turning, hardTurning }
+
 public class CanoeController : MonoBehaviour
 {
     [Header("Waypoints")]
@@ -19,20 +21,26 @@ public class CanoeController : MonoBehaviour
     public float rotationDirection; // -1 = opposite direction, 0 = perpendicular, 1 = perfect alignment
     public bool isRotatingRight;    // Which way we're turning
     
+    private ECanoeState canoeState = ECanoeState.straight;
+
+    public Vector3 CurrentTarget => _currentTarget;
+    
+    private Vector3 _currentTarget;
+    
     void Update()
     {
         if (points.Count == 0) return;
         
-        Vector3 currentTarget = points[currentPointIndex].position;
+        _currentTarget = points[currentPointIndex].position;
         
         // Calculate how aligned we are with target direction
-        CalculateRotationAlignment(currentTarget);
+        CalculateRotationAlignment(_currentTarget);
         
         // Rotate toward current point
-        RotateToward(currentTarget);
+        RotateToward(_currentTarget);
         
         // Check if close enough to switch to next point
-        float distance = Vector3.Distance(transform.position, currentTarget);
+        float distance = Vector3.Distance(transform.position, _currentTarget);
         if (distance <= arrivalDistance)
         {
             GoToNextPoint();
@@ -65,6 +73,27 @@ public class CanoeController : MonoBehaviour
         {
             rotationDirection = 1f; // We're at the target, so we're "aligned"
         }
+
+        SetCurrentState();
+    }
+
+    void SetCurrentState()
+    {
+        GuiDebug.Instance.PrintString("state", canoeState.ToString());
+        
+        if (rotationDirection > 0.9f)
+        {
+            canoeState = ECanoeState.straight;
+            return;
+        }
+
+        if (rotationDirection > 0.1f)
+        {
+            canoeState = ECanoeState.turning;
+            return;
+        }
+        
+        canoeState = ECanoeState.hardTurning;
     }
     
     void RotateToward(Vector3 target)
