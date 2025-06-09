@@ -27,6 +27,8 @@ public class CanoeController : MonoBehaviour
     
     private Vector3 _currentTarget;
     
+    public ECanoeState CurrentState => canoeState;
+    
     void Update()
     {
         if (points.Count == 0) return;
