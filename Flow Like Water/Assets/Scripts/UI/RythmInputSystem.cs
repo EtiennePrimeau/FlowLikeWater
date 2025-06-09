@@ -33,8 +33,22 @@ public class RhythmInputSystem : MonoBehaviour
         CleanupPrompts();
     }
     
-    void GeneratePrompts()
+    public void GeneratePrompts()
     {
+        if (canoe.CurrentState == ECanoeState.hardTurning)
+        {
+
+            InputPrompt hprompt = new InputPrompt();
+            hprompt.inputType = GetInputTypeFromCurrentState();
+            hprompt.targetPosition = GetTargetZonePosition();
+            hprompt.spawnPosition = hprompt.targetPosition + Vector3.up * spawnDistance;
+        
+            activePrompts.Add(hprompt);
+            lastPromptTime = rhythmUI.ShowPromptHardTurn(hprompt, lastPromptTime, promptInterval, canoe.isRotatingRight);
+            
+            return;
+        }
+        
         if (Time.time - lastPromptTime < promptInterval) return;
         
         InputPrompt prompt = new InputPrompt();
@@ -66,7 +80,7 @@ public class RhythmInputSystem : MonoBehaviour
             case ECanoeState.turning:
                 return isRight ? EInputType.Right : EInputType.Left;
             case ECanoeState.hardTurning:
-                return isRight ? EInputType.RightHard : EInputType.LeftHard;
+                return isRight ? EInputType.LeftHard : EInputType.RightHard;
             default:
                 Debug.LogError("Unknown state: " + canoe.CurrentState);
                 return EInputType.StraightLeft;

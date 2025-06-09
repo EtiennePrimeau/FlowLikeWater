@@ -14,6 +14,33 @@ public class RhythmUI : MonoBehaviour
     [Header("Visual Settings")]
     public float fallSpeed = 150f; // Units per second
     public Transform targetZoneVisual; // Optional: visual indicator for target zone
+
+    public float ShowPromptHardTurn(InputPrompt prompt, float lastPromptTime, float promptInterval, bool canoeRight)
+    {
+        bool isLeft = prompt.inputType == EInputType.LeftHard;
+        float lastPromptTimeLocal = lastPromptTime;
+            
+        GameObject promptObj1 = Instantiate(promptPrefab, 
+            isLeft  ? promptLeftContainer : promptRightContainer);
+        GameObject promptObj2 = null;
+        
+        if (Time.time - lastPromptTime > promptInterval)
+        {
+            promptObj2 = Instantiate(promptPrefab, 
+                !isLeft  ? promptLeftContainer : promptRightContainer);
+            lastPromptTimeLocal = Time.time;
+        }
+        
+        if (!canoeRight)
+            SetupPrompt(promptObj2, promptObj1, prompt);
+        else
+            SetupPrompt(promptObj1, promptObj2, prompt);
+        StartCoroutine(AnimatePrompt(promptObj1, prompt));
+        if (promptObj2 != null)
+            StartCoroutine(AnimatePrompt(promptObj2, prompt));
+
+        return lastPromptTimeLocal;
+    }
     
     public void ShowPrompt(InputPrompt prompt)
     {
@@ -51,57 +78,87 @@ public class RhythmUI : MonoBehaviour
     
     void SetupPrompt(GameObject promptObjLeft, GameObject promptObjRight, InputPrompt prompt)
     {
-        TextMeshProUGUI textL = promptObjLeft.GetComponentInChildren<TextMeshProUGUI>();
-        TextMeshProUGUI textR = promptObjRight.GetComponentInChildren<TextMeshProUGUI>();
+        TextMeshProUGUI textL = null;
+        TextMeshProUGUI textR = null;
+        
+        if (promptObjLeft)
+            textL = promptObjLeft.GetComponentInChildren<TextMeshProUGUI>();
+        if (promptObjRight)
+            textR = promptObjRight.GetComponentInChildren<TextMeshProUGUI>();
         
         switch (prompt.inputType)
         {
             case EInputType.StraightLeft:
-                if (textL && textR)
+                if (textL)
                 {
                     textL.text = "Z";
-                    textR.text = "P";
                     textL.color = Color.blue;
+                }
+                if (textR)
+                {
+                    textR.text = "P";
                     textR.color = Color.blue;
                 }
                 break;
             case EInputType.StraightRight:
-                if (textL && textR)
+                if (textL)
                 {
                     textL.text = "C";
-                    textR.text = "I";
                     textL.color = Color.blue;
+                }
+                if (textR)
+                {
+                    textR.text = "I";
                     textR.color = Color.blue;
                 }
                 break;
             case EInputType.Left:
-                if (textL && textR)
+                if (textL)
                 {
                     textL.text = "C";
-                    textR.text = "P";
                     textL.color = Color.green;
+                }
+                if (textR)
+                {
+                    textR.text = "P";
                     textR.color = Color.green;
                 }
                 break;
             case EInputType.Right:
-                if (textL && textR)
+                if (textL)
                 {
                     textL.text = "Z";
-                    textR.text = "I";
                     textL.color = Color.yellow;
+                }
+                if (textR)
+                {
+                    textR.text = "I";
                     textR.color = Color.yellow;
                 }
                 break;
             case EInputType.LeftHard:
-            case EInputType.RightHard:
-                if (textL && textR)
+                if (textL)
                 {
                     textL.text = "Z";
-                    textR.text = "C";
                     textL.color = Color.red;
+                }
+                if (textR)
+                {
+                    textR.text = "P";
                     textR.color = Color.red;
                 }
-
+                break;
+            case EInputType.RightHard:
+                if (textL)
+                {
+                    textL.text = "I";
+                    textL.color = Color.red;
+                }
+                if (textR)
+                {
+                    textR.text = "C";
+                    textR.color = Color.red;
+                }
                 break;
 
         }

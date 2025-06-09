@@ -5,6 +5,8 @@ public enum ECanoeState { straight, turning, hardTurning }
 
 public class CanoeController : MonoBehaviour
 {
+    public RhythmInputSystem rhythmInputSystem;
+    
     [Header("Waypoints")]
     public List<Transform> points = new List<Transform>();
     
@@ -85,17 +87,17 @@ public class CanoeController : MonoBehaviour
         
         if (rotationDirection > 0.9f)
         {
-            canoeState = ECanoeState.straight;
+            ChangeState(ECanoeState.straight);
             return;
         }
 
         if (rotationDirection > 0.1f)
         {
-            canoeState = ECanoeState.turning;
+            ChangeState(ECanoeState.turning);
             return;
         }
         
-        canoeState = ECanoeState.hardTurning;
+        ChangeState(ECanoeState.hardTurning);
     }
     
     void RotateToward(Vector3 target)
@@ -120,6 +122,18 @@ public class CanoeController : MonoBehaviour
         if (currentPointIndex >= points.Count)
         {
             currentPointIndex = 0; // Loop back to start
+        }
+    }
+
+
+    void ChangeState(ECanoeState newState)
+    {
+        if (newState != canoeState)
+        {
+            Debug.Log("state changed from : " + canoeState + newState);
+            //State Change
+            canoeState = newState;
+            rhythmInputSystem.GeneratePrompts();
         }
     }
     
