@@ -1430,6 +1430,8 @@ MonoBehaviour:
   - {fileID: 336367632}
   rotationSpeed: 20
   arrivalDistance: 5
+  turnThreshold: 0.2
+  straightThreshold: 0.9
   showDebug: 1
   rotationDirection: 0
   isRotatingRight: 0
@@ -1589,7 +1591,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8289917023136742145, guid: 39739250eb98a7a48a18a3cdd40582a6, type: 3}
       propertyPath: fallSpeed
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

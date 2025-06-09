@@ -217,7 +217,7 @@ public class RhythmUI : MonoBehaviour
     {
         // Convert 3D world position to 2D screen position
         // You might need to adjust this based on your camera setup
-        return new Vector2(0f, worldPos.y - 200f); // Simple Y-axis mapping
+        return new Vector2(0f, worldPos.y);
     }
     
     public void ShowFeedback(string message)

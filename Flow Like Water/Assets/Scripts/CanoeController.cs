@@ -13,6 +13,8 @@ public class CanoeController : MonoBehaviour
     [Header("Settings")]
     public float rotationSpeed = 50f;
     public float arrivalDistance = 2f;
+    public float turnThreshold = .4f;
+    public float straightThreshold = .9f;
     
     [Header("Debug")]
     public bool showDebug = true;
@@ -85,13 +87,13 @@ public class CanoeController : MonoBehaviour
     {
         GuiDebug.Instance.PrintString("state", canoeState.ToString());
         
-        if (rotationDirection > 0.9f)
+        if (rotationDirection > straightThreshold)
         {
             ChangeState(ECanoeState.straight);
             return;
         }
 
-        if (rotationDirection > 0.1f)
+        if (rotationDirection > turnThreshold)
         {
             ChangeState(ECanoeState.turning);
             return;
