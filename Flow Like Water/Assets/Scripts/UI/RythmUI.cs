@@ -22,8 +22,7 @@ public class RhythmUI : MonoBehaviour
     
     void SetupPrompt(GameObject promptObj, InputPrompt prompt)
     {
-        Image image = promptObj.GetComponent<Image>();
-        TextMeshProUGUI text = promptObj.GetComponentInChildren<TextMeshProUGUI>();
+        TextMeshProUGUI text = promptObj.GetComponent<TextMeshProUGUI>();
         
         switch (prompt.inputType)
         {

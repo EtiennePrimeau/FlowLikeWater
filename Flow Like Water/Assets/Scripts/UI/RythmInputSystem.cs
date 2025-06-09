@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -121,21 +122,22 @@ public class RhythmInputSystem : MonoBehaviour
     void CheckInput(EInputType inputType)
     {
         Debug.Log("Checking input: " + inputType);
+        float timeDiff = 0;
         foreach (var prompt in activePrompts)
         {
             if (prompt.inputType == inputType && prompt.isActive)
             {
-                float timeDiff = Mathf.Abs(Time.time - prompt.hitTime);
-                if (timeDiff < 0.3f)
+                timeDiff = Time.time - prompt.hitTime;
+                if (Mathf.Abs(timeDiff) < 0.3f)
                 {
                     string feedback = timeDiff < 0.1f ? "PERFECT!" : "GOOD!";
-                    rhythmUI.ShowFeedback(feedback);
+                    rhythmUI.ShowFeedback(feedback + " " + (float)Math.Round(timeDiff, 2));
                     prompt.isActive = false;
                     return;
                 }
             }
         }
-        rhythmUI.ShowFeedback("MISS");
+        rhythmUI.ShowFeedback("MISS " + (float)Math.Round(timeDiff, 2));
     }
     
     void CleanupPrompts()
