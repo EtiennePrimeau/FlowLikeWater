@@ -37,7 +37,6 @@ public class RhythmInputSystem : MonoBehaviour
     {
         if (canoe.CurrentState == ECanoeState.hardTurning)
         {
-
             InputPrompt hprompt = new InputPrompt();
             hprompt.inputType = GetInputTypeFromCurrentState();
             hprompt.targetPosition = GetTargetZonePosition();

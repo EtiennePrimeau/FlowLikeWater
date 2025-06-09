@@ -19,6 +19,14 @@ public class RhythmUI : MonoBehaviour
     {
         bool isLeft = prompt.inputType == EInputType.LeftHard;
         float lastPromptTimeLocal = lastPromptTime;
+        
+        InputPrompt prompt1 = new InputPrompt();
+        prompt1.inputType = prompt.inputType;
+        prompt1.targetPosition = prompt.targetPosition;
+        prompt1.spawnPosition = prompt.spawnPosition;
+        prompt1.currentPosition = prompt.spawnPosition;
+        prompt1.isActive = prompt.isActive;
+        InputPrompt prompt2 = null;
             
         GameObject promptObj1 = Instantiate(promptPrefab, 
             isLeft  ? promptLeftContainer : promptRightContainer);
@@ -29,15 +37,22 @@ public class RhythmUI : MonoBehaviour
             promptObj2 = Instantiate(promptPrefab, 
                 !isLeft  ? promptLeftContainer : promptRightContainer);
             lastPromptTimeLocal = Time.time;
+            
+            prompt2 = new InputPrompt();
+            prompt2.inputType = prompt.inputType;
+            prompt2.targetPosition = prompt.targetPosition;
+            prompt2.spawnPosition = prompt.spawnPosition;
+            prompt2.currentPosition = prompt.spawnPosition;
+            prompt2.isActive = prompt.isActive;
         }
         
         if (!canoeRight)
             SetupPrompt(promptObj2, promptObj1, prompt);
         else
             SetupPrompt(promptObj1, promptObj2, prompt);
-        StartCoroutine(AnimatePrompt(promptObj1, prompt));
+        StartCoroutine(AnimatePrompt(promptObj1, prompt1));
         if (promptObj2 != null)
-            StartCoroutine(AnimatePrompt(promptObj2, prompt));
+            StartCoroutine(AnimatePrompt(promptObj2, prompt2));
 
         return lastPromptTimeLocal;
     }
@@ -51,6 +66,20 @@ public class RhythmUI : MonoBehaviour
             return;
         }
         
+        InputPrompt prompt1 = new InputPrompt();
+        prompt1.inputType = prompt.inputType;
+        prompt1.targetPosition = prompt.targetPosition;
+        prompt1.spawnPosition = prompt.spawnPosition;
+        prompt1.currentPosition = prompt.spawnPosition;
+        prompt1.isActive = prompt.isActive;
+        
+        InputPrompt prompt2 = new InputPrompt();
+        prompt2.inputType = prompt.inputType;
+        prompt2.targetPosition = prompt.targetPosition;
+        prompt2.spawnPosition = prompt.spawnPosition;
+        prompt2.currentPosition = prompt.spawnPosition;
+        prompt2.isActive = prompt.isActive;
+        
         if (prompt.inputType == EInputType.Left ||
             prompt.inputType == EInputType.Right)
         {
@@ -61,16 +90,16 @@ public class RhythmUI : MonoBehaviour
             GameObject promptObj2 = Instantiate(promptPrefab, 
                 isLeft  ? promptLeftContainer : promptRightContainer);
             SetupPrompt(promptObj1, promptObj2, prompt);
-            StartCoroutine(AnimatePrompt(promptObj1, prompt));
-            StartCoroutine(AnimatePrompt(promptObj2, prompt));
+            StartCoroutine(AnimatePrompt(promptObj1, prompt1));
+            StartCoroutine(AnimatePrompt(promptObj2, prompt2));
         }
         else
         {
             GameObject promptObjL = Instantiate(promptPrefab, promptLeftContainer);
             GameObject promptObjR = Instantiate(promptPrefab, promptRightContainer);
             SetupPrompt(promptObjL, promptObjR, prompt);
-            StartCoroutine(AnimatePrompt(promptObjL, prompt));
-            StartCoroutine(AnimatePrompt(promptObjR, prompt));
+            StartCoroutine(AnimatePrompt(promptObjL, prompt1));
+            StartCoroutine(AnimatePrompt(promptObjR, prompt2));
         }
         
         
