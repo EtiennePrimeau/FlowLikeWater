@@ -7,6 +7,8 @@ public enum ECanoeState { straight, turning, hardTurning }
 
 public class CanoeController : MonoBehaviour
 {
+    public static CanoeController Instance;
+    
     public RhythmInputSystem rhythmInputSystem;
     public RhythmUI rhythmUI;
     public Transform perfectSpot;
@@ -44,9 +46,14 @@ public class CanoeController : MonoBehaviour
     public ECanoeState DelayedState => delayedState;
 
 
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
-        stateDelayTime = rhythmInputSystem.spawnDistance / rhythmUI.fallSpeed - 0.4f;
+        stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.fallSpeed - 0.4f;
     }
 
     void Update()

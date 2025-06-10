@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public enum EInputType { Left, Right, LeftHard, RightHard, StraightLeft, StraightRight }
 
@@ -9,19 +10,19 @@ public class RhythmInputSystem : MonoBehaviour
     [Header("References")]
     public CanoeController canoe;
     public RhythmUI rhythmUI;
-    public Transform targetZone; // The zone where timing is perfect
+    public Transform perfectSpot; // The zone where timing is perfect
     
     [Header("Position Settings")]
-    public float spawnDistance = 300f;     // How far above target zone prompts spawn
+    public float spawnDistance = 300f;
     public float promptInterval = 0.8f;
-    public float perfectZoneSize = 50f;    // Size of perfect timing zone
-    public float goodZoneSize = 100f;      // Size of good timing zone
+    public float perfectZoneSize = 50f;
+    public float goodZoneSize = 100f;
     
     [Header("Input Settings")]
     public float combinationWindow = 0.2f;
     
     private Dictionary<KeyCode, float> keyPressTimes = new Dictionary<KeyCode, float>();  
-    private List<InputPrompt> activePrompts = new List<InputPrompt>();
+    public List<PromptObject> activePrompts = new List<PromptObject>(); // Track actual prefabs
     private float lastPromptTime;
     
     void Update()
@@ -35,50 +36,49 @@ public class RhythmInputSystem : MonoBehaviour
     
     public void GeneratePrompts()
     {
+        EInputType inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
+        Vector3 targetPos = GetTargetZonePosition();
+        Vector3 spawnPos = targetPos + canoe.transform.forward * spawnDistance;
+        List<PromptObject> newPrompts = new List<PromptObject>();
+        
         if (canoe.CurrentState == ECanoeState.hardTurning)
         {
-            InputPrompt hprompt = new InputPrompt();
-            hprompt.inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
-            hprompt.targetPosition = GetTargetZonePosition();
-            hprompt.spawnPosition = hprompt.targetPosition + Vector3.up * spawnDistance;
-        
-            activePrompts.Add(hprompt);
-
-            InputPrompt newPrompt;
-            lastPromptTime = rhythmUI.ShowPromptHardTurn(out newPrompt, hprompt, lastPromptTime, promptInterval, canoe.isRotatingRight);
-            if (newPrompt != null)
-            {
-                activePrompts.Add(newPrompt);
-            }
+            //EInputType inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
+            //Vector3 targetPos = GetTargetZonePosition();
+            //Vector3 spawnPos = targetPos + Vector3.up * spawnDistance;
+            
+            // Spawn prompts and get the GameObjects back
+            newPrompts = rhythmUI.ShowPromptHardTurn(inputType, spawnPos, targetPos, 
+                lastPromptTime, promptInterval, canoe.isRotatingRight);
+            
+            activePrompts.AddRange(newPrompts);
+            if (newPrompts.Count > 0) lastPromptTime = Time.time;
             
             return;
         }
         
         if (Time.time - lastPromptTime < promptInterval) return;
         
-        InputPrompt prompt = new InputPrompt();
-        prompt.inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
-        prompt.targetPosition = GetTargetZonePosition();
-        prompt.spawnPosition = prompt.targetPosition + Vector3.up * spawnDistance;
-        prompt.isPressKey = true;
+        //EInputType inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
+        //Vector3 targetPos = GetTargetZonePosition();
+        //Vector3 spawnPos = targetPos + Vector3.up * spawnDistance;
         
-        activePrompts.Add(prompt);
-        rhythmUI.ShowPrompt(prompt);
+        // Spawn prompts and get the GameObjects back
+        newPrompts = rhythmUI.ShowPrompt(inputType, spawnPos, targetPos);
+        activePrompts.AddRange(newPrompts);
         lastPromptTime = Time.time;
     }
     
     Vector3 GetTargetZonePosition()
     {
-        if (targetZone != null)
-            return targetZone.position;
+        if (perfectSpot != null)
+            return perfectSpot.position;
         
-        // Fallback: use canoe position with offset
         return canoe.transform.position + Vector3.up * 2f;
     }
 
     EInputType GetInputTypeFromState(ECanoeState state, bool isRight)
     {
-        //bool isRight = canoe.isRotatingRight;
         switch (state)
         {
             case ECanoeState.straight:
@@ -106,7 +106,6 @@ public class RhythmInputSystem : MonoBehaviour
         CheckInputCombination(KeyCode.C, KeyCode.I, EInputType.StraightRight);
         CheckInputCombination(KeyCode.C, KeyCode.P, EInputType.Left);
         CheckInputCombination(KeyCode.Z, KeyCode.I, EInputType.Right);
-        
     }
 
     void CheckInputCombination(KeyCode key1, KeyCode key2, EInputType inputType)
@@ -132,21 +131,13 @@ public class RhythmInputSystem : MonoBehaviour
 
     void CheckHardTurnInput(KeyCode holdKey, KeyCode pressKey, EInputType inputType)
     {
-        //Debug.Log("Checking hard turn");
-        bool holdingKey = false;
-        if (Input.GetKey(holdKey))
-        {
-            holdingKey = true;
-            //Debug.Log("holding");
-        }
+        bool holdingKey = Input.GetKey(holdKey);
         if (Input.GetKeyDown(pressKey))
-        {
             keyPressTimes[pressKey] = Time.time;
-        }
         
         if (keyPressTimes.ContainsKey(pressKey) && holdingKey)
         {
-            CheckInput(inputType, pressKey);
+            CheckInput(inputType);
             keyPressTimes.Remove(pressKey);
         }
         
@@ -155,42 +146,29 @@ public class RhythmInputSystem : MonoBehaviour
 
     void CleanupOldKeyPresses()
     {
-        var keysToRemove = new List<KeyCode>();
-        foreach (var kvp in keyPressTimes)
-        {
-            if (Time.time - kvp.Value > combinationWindow)
-                keysToRemove.Add(kvp.Key);
-        }
+        var keysToRemove = keyPressTimes.Where(kvp => Time.time - kvp.Value > combinationWindow)
+                                       .Select(kvp => kvp.Key).ToList();
         
         foreach (var key in keysToRemove)
             keyPressTimes.Remove(key);
     }
     
-    void CheckInput(EInputType inputType,  KeyCode key = default)
+    void CheckInput(EInputType inputType)
     {
-        //Debug.Log("Checking input: " + inputType);
-        
-        InputPrompt closestPrompt = null;
+        PromptObject closestPrompt = null;
         float closestDistance = float.MaxValue;
+        Vector3 targetPos = GetTargetZonePosition();
         
-        // Find the closest prompt of the right type to the target zone
-        foreach (var prompt in activePrompts)
+        // Find the closest prompt of the right type
+        foreach (var promptObj in activePrompts)
         {
-            
-            if (prompt.inputType == inputType && prompt.isActive)
+            if (promptObj != null && promptObj.inputType == inputType && promptObj.canBePressed)
             {
-                if (!prompt.isPressKey)
-                {
-                    //Debug.Log("blocked");
-                    continue;
-                }
-                //Debug.Log("isPressKey");
-                
-                float distance = Vector3.Distance(prompt.currentPosition, prompt.targetPosition);
+                float distance = Vector3.Distance(promptObj.transform.position, targetPos);
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestPrompt = prompt;
+                    closestPrompt = promptObj;
                 }
             }
         }
@@ -198,9 +176,7 @@ public class RhythmInputSystem : MonoBehaviour
         if (closestPrompt != null)
         {
             GuiDebug.Instance.PrintFloat("distance", closestDistance);
-            Debug.Log("current : " + closestPrompt.currentPosition);
-            Debug.Log("target : " + closestPrompt.targetPosition);
-            Debug.DrawLine(closestPrompt.currentPosition, closestPrompt.targetPosition, Color.magenta, 10f);
+            Debug.DrawLine(closestPrompt.transform.position, targetPos, Color.magenta, 10f);
             
             EInputType expectedInput = GetInputTypeFromState(canoe.DelayedState, canoe.isRotatingRightDelayed);
         
@@ -208,41 +184,34 @@ public class RhythmInputSystem : MonoBehaviour
             {
                 if (closestDistance <= perfectZoneSize)
                 {
-                    rhythmUI.ShowFeedback("PERFECT!" + (float)Math.Round(closestDistance, 1));
-                    closestPrompt.isActive = false;
+                    rhythmUI.ShowFeedback($"PERFECT! {closestDistance:F1}");
+                    Destroy(closestPrompt.gameObject);
                 }
                 else if (closestDistance <= goodZoneSize)
                 {
-                    rhythmUI.ShowFeedback("GOOD!" + (float)Math.Round(closestDistance, 1));
-                    closestPrompt.isActive = false;
+                    rhythmUI.ShowFeedback($"GOOD! {closestDistance:F1}");
+                    Destroy(closestPrompt.gameObject);
                 }
                 else
                 {
-                    rhythmUI.ShowFeedback("TOO FAR!" + (float)Math.Round(closestDistance, 1));
+                    rhythmUI.ShowFeedback($"TOO FAR! {closestDistance:F1}");
                 }
             }
             else
             {
-                rhythmUI.ShowFeedback("WRONG INPUT! " + expectedInput);
-                Debug.Log("WRONG INPUT :: expected : " + expectedInput + " and input : " + inputType);
+                rhythmUI.ShowFeedback($"WRONG INPUT! {expectedInput}");
             }
         }
     }
     
     void CleanupPrompts()
     {
-        // Remove prompts that have passed too far below the target zone
-        activePrompts.RemoveAll(p => p.currentPosition.y < p.targetPosition.y - goodZoneSize);
+        // Remove null references (destroyed objects)
+        activePrompts.RemoveAll(p => p == null);
+        
+        // Remove prompts that have fallen too far
+        Vector3 targetPos = GetTargetZonePosition();
+        activePrompts.RemoveAll(p => p != null && 
+            p.transform.position.y < targetPos.y - goodZoneSize);
     }
-}
-
-[System.Serializable]
-public class InputPrompt
-{
-    public EInputType inputType;
-    public Vector3 targetPosition;   // Where perfect timing occurs
-    public Vector3 spawnPosition;    // Where prompt starts
-    public Vector3 currentPosition;  // Current position (updated by UI)
-    public bool isActive = true;
-    public bool isPressKey = false;
 }

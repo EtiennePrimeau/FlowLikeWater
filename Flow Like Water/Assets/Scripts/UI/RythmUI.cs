@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class RhythmUI : MonoBehaviour
 {
@@ -10,215 +12,126 @@ public class RhythmUI : MonoBehaviour
     public Transform promptRightContainer;
     public GameObject promptPrefab;
     public TextMeshProUGUI feedbackText;
-    
-    [Header("Visual Settings")]
-    public float fallSpeed = 150f; // Units per second
-    public Transform targetZoneVisual; // Optional: visual indicator for target zone
 
-    public float ShowPromptHardTurn(out InputPrompt newPrompt, InputPrompt prompt, float lastPromptTime, float promptInterval, bool canoeRight)
+    //public float fallSpeed;
+
+    private void Start()
     {
-        bool isLeft = prompt.inputType == EInputType.LeftHard;
-        float lastPromptTimeLocal = lastPromptTime;
+        //fallSpeed = promptPrefab.GetComponent<PromptObject>().GetSpeed();
+    }
+
+    public List<PromptObject> ShowPromptHardTurn(EInputType inputType, Vector3 spawnPos, Vector3 targetPos, 
+        float lastPromptTime, float promptInterval, bool canoeRight)
+    {
+        var prompts = new List<PromptObject>();
+        bool isLeft = inputType == EInputType.LeftHard;
         
-        InputPrompt prompt1 = new InputPrompt();
-        prompt1.inputType = prompt.inputType;
-        prompt1.targetPosition = prompt.targetPosition;
-        prompt1.spawnPosition = prompt.spawnPosition;
-        prompt1.currentPosition = prompt.spawnPosition;
-        prompt1.isActive = prompt.isActive;
-        newPrompt = null;
-            
+        // Always create first prompt
         GameObject promptObj1 = Instantiate(promptPrefab, 
-            isLeft  ? promptLeftContainer : promptRightContainer);
-        GameObject promptObj2 = null;
+            isLeft ? promptLeftContainer : promptRightContainer);
+        var prompt1 = SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, isLeft);
+        prompts.Add(prompt1);
         
+        // Create second prompt if enough time has passed
         if (Time.time - lastPromptTime > promptInterval)
         {
-            promptObj2 = Instantiate(promptPrefab, 
-                !isLeft  ? promptLeftContainer : promptRightContainer);
-            lastPromptTimeLocal = Time.time;
-            
-            newPrompt = new InputPrompt();
-            newPrompt.inputType = prompt.inputType;
-            newPrompt.targetPosition = prompt.targetPosition;
-            newPrompt.spawnPosition = prompt.spawnPosition;
-            newPrompt.currentPosition = prompt.spawnPosition;
-            newPrompt.isActive = prompt.isActive;
-            newPrompt.isPressKey = true;
+            GameObject promptObj2 = Instantiate(promptPrefab, 
+                !isLeft ? promptLeftContainer : promptRightContainer);
+            var prompt2 = SetupPromptObject(promptObj2, inputType, spawnPos, targetPos, isLeft);
+            prompt2.canBePressed = true;
+            prompts.Add(prompt2);
         }
         
-        if (!canoeRight)
-            SetupPrompt(promptObj2, promptObj1, prompt);
-        else
-            SetupPrompt(promptObj1, promptObj2, prompt);
-        StartCoroutine(AnimatePrompt(promptObj1, prompt1));
-        if (promptObj2 != null)
-            StartCoroutine(AnimatePrompt(promptObj2, newPrompt));
-
-        return lastPromptTimeLocal;
+        return prompts;
     }
     
-    public void ShowPrompt(InputPrompt prompt)
+    public List<PromptObject> ShowPrompt(EInputType inputType, Vector3 spawnPos, Vector3 targetPos)
     {
-        if (prompt.inputType == EInputType.LeftHard ||
-            prompt.inputType == EInputType.RightHard)
+        var prompts = new List<PromptObject>();
+        
+        if (inputType == EInputType.LeftHard || inputType == EInputType.RightHard)
+            return prompts; // Handle in ShowPromptHardTurn
+        
+        // Create prompts based on input type
+        if (inputType == EInputType.Left || inputType == EInputType.Right)
         {
-            Debug.Log("Hard Turn return");
-            return;
-        }
-        
-        InputPrompt prompt1 = new InputPrompt();
-        prompt1.inputType = prompt.inputType;
-        prompt1.targetPosition = prompt.targetPosition;
-        prompt1.spawnPosition = prompt.spawnPosition;
-        prompt1.currentPosition = prompt.spawnPosition;
-        prompt1.isActive = prompt.isActive;
-        
-        InputPrompt prompt2 = new InputPrompt();
-        prompt2.inputType = prompt.inputType;
-        prompt2.targetPosition = prompt.targetPosition;
-        prompt2.spawnPosition = prompt.spawnPosition;
-        prompt2.currentPosition = prompt.spawnPosition;
-        prompt2.isActive = prompt.isActive;
-        
-        if (prompt.inputType == EInputType.Left ||
-            prompt.inputType == EInputType.Right)
-        {
-            bool isLeft = prompt.inputType == EInputType.Left;
+            bool isLeft = inputType == EInputType.Left;
             
             GameObject promptObj1 = Instantiate(promptPrefab, 
-                isLeft  ? promptRightContainer : promptLeftContainer);
+                isLeft ? promptRightContainer : promptLeftContainer);
             GameObject promptObj2 = Instantiate(promptPrefab, 
-                isLeft  ? promptRightContainer : promptLeftContainer);
-            SetupPrompt(promptObj1, promptObj2, prompt);
-            StartCoroutine(AnimatePrompt(promptObj1, prompt1));
-            StartCoroutine(AnimatePrompt(promptObj2, prompt2));
+                isLeft ? promptRightContainer : promptLeftContainer);
+                
+            prompts.Add(SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, isLeft));
+            prompts.Add(SetupPromptObject(promptObj2, inputType, spawnPos, targetPos, isLeft));
         }
         else
         {
             GameObject promptObjL = Instantiate(promptPrefab, promptLeftContainer);
             GameObject promptObjR = Instantiate(promptPrefab, promptRightContainer);
-            SetupPrompt(promptObjL, promptObjR, prompt);
-            StartCoroutine(AnimatePrompt(promptObjL, prompt1));
-            StartCoroutine(AnimatePrompt(promptObjR, prompt2));
+            
+            prompts.Add(SetupPromptObject(promptObjL, inputType, spawnPos, targetPos, false));
+            prompts.Add(SetupPromptObject(promptObjR, inputType, spawnPos, targetPos, true));
         }
         
-        
+        return prompts;
     }
     
-    void SetupPrompt(GameObject promptObjLeft, GameObject promptObjRight, InputPrompt prompt)
+    PromptObject SetupPromptObject(GameObject promptObj, EInputType inputType, Vector3 spawnPos, Vector3 targetPos, bool isRight)
     {
-        TextMeshProUGUI textL = null;
-        TextMeshProUGUI textR = null;
-        
-        if (promptObjLeft)
-            textL = promptObjLeft.GetComponentInChildren<TextMeshProUGUI>();
-        if (promptObjRight)
-            textR = promptObjRight.GetComponentInChildren<TextMeshProUGUI>();
-        
-        switch (prompt.inputType)
-        {
-            case EInputType.StraightLeft:
-                if (textL)
-                {
-                    textL.text = "Z";
-                    textL.color = Color.blue;
-                }
-                if (textR)
-                {
-                    textR.text = "P";
-                    textR.color = Color.blue;
-                }
-                break;
-            case EInputType.StraightRight:
-                if (textL)
-                {
-                    textL.text = "C";
-                    textL.color = Color.blue;
-                }
-                if (textR)
-                {
-                    textR.text = "I";
-                    textR.color = Color.blue;
-                }
-                break;
-            case EInputType.Left:
-                if (textL)
-                {
-                    textL.text = "C";
-                    textL.color = Color.green;
-                }
-                if (textR)
-                {
-                    textR.text = "P";
-                    textR.color = Color.green;
-                }
-                break;
-            case EInputType.Right:
-                if (textL)
-                {
-                    textL.text = "Z";
-                    textL.color = Color.yellow;
-                }
-                if (textR)
-                {
-                    textR.text = "I";
-                    textR.color = Color.yellow;
-                }
-                break;
-            case EInputType.LeftHard:
-                if (textL)
-                {
-                    textL.text = "Z";
-                    textL.color = Color.red;
-                }
-                if (textR)
-                {
-                    textR.text = "P";
-                    textR.color = Color.red;
-                }
-                break;
-            case EInputType.RightHard:
-                if (textL)
-                {
-                    textL.text = "I";
-                    textL.color = Color.red;
-                }
-                if (textR)
-                {
-                    textR.text = "C";
-                    textR.color = Color.red;
-                }
-                break;
-
-        }
-    }
-    
-    IEnumerator AnimatePrompt(GameObject promptObj, InputPrompt prompt)
-    {
-        RectTransform rect = promptObj.GetComponent<RectTransform>();
+        // Add PromptObject component
+        PromptObject promptComponent = promptObj.GetComponent<PromptObject>();
+        if (promptComponent == null)
+            promptComponent = promptObj.AddComponent<PromptObject>();
+            
+        promptComponent.inputType = inputType;
+        promptComponent.targetPosition = targetPos;
+        promptComponent.canBePressed = true;
         
         // Set initial position
-        prompt.currentPosition = prompt.spawnPosition;
-        rect.anchoredPosition = WorldToScreenPoint(prompt.spawnPosition);
+        Vector3 offset = CanoeController.Instance.transform.right * -5f;
+        if (isRight)
+            offset = CanoeController.Instance.transform.right * 5f;
+        promptObj.transform.position = spawnPos + offset;
         
-        while (prompt.isActive && prompt.currentPosition.y > prompt.targetPosition.y - 200f)
-        {
-            // Move prompt down
-            prompt.currentPosition += Vector3.down * fallSpeed * Time.deltaTime;
-            rect.anchoredPosition = WorldToScreenPoint(prompt.currentPosition);
-            
-            yield return null;
-        }
+        // Setup visual text
+        SetupPromptVisual(promptObj, inputType, isRight);
         
-        Destroy(promptObj);
+        return promptComponent;
     }
     
-    Vector2 WorldToScreenPoint(Vector3 worldPos)
+    void SetupPromptVisual(GameObject promptObj, EInputType inputType, bool isRight)
     {
-        // Convert 3D world position to 2D screen position
-        // You might need to adjust this based on your camera setup
-        return new Vector2(0f, worldPos.y);
+        var text = promptObj.GetComponentInChildren<TextMeshProUGUI>();
+        if (text == null) return;
+        
+        switch (inputType)
+        {
+            case EInputType.StraightLeft:
+                text.text = !isRight ? "Z" : "P";
+                text.color = Color.blue;
+                break;
+            case EInputType.StraightRight:
+                text.text = !isRight ? "C" : "I";
+                text.color = Color.blue;
+                break;
+            case EInputType.Left:
+                text.text = !isRight ? "C" : "P";
+                text.color = Color.green;
+                break;
+            case EInputType.Right:
+                text.text = !isRight ? "Z" : "I";
+                text.color = Color.yellow;
+                break;
+            case EInputType.LeftHard:
+                text.text = !isRight ? "Z" : "P";
+                text.color = Color.red;
+                break;
+            case EInputType.RightHard:
+                text.text = !isRight ? "C" : "I";
+                text.color = Color.red;
+                break;
+        }
     }
     
     public void ShowFeedback(string message)
