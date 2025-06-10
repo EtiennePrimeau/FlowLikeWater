@@ -15,7 +15,7 @@ public class RhythmUI : MonoBehaviour
     public float fallSpeed = 150f; // Units per second
     public Transform targetZoneVisual; // Optional: visual indicator for target zone
 
-    public float ShowPromptHardTurn(InputPrompt prompt, float lastPromptTime, float promptInterval, bool canoeRight)
+    public float ShowPromptHardTurn(out InputPrompt newPrompt, InputPrompt prompt, float lastPromptTime, float promptInterval, bool canoeRight)
     {
         bool isLeft = prompt.inputType == EInputType.LeftHard;
         float lastPromptTimeLocal = lastPromptTime;
@@ -26,7 +26,7 @@ public class RhythmUI : MonoBehaviour
         prompt1.spawnPosition = prompt.spawnPosition;
         prompt1.currentPosition = prompt.spawnPosition;
         prompt1.isActive = prompt.isActive;
-        InputPrompt prompt2 = null;
+        newPrompt = null;
             
         GameObject promptObj1 = Instantiate(promptPrefab, 
             isLeft  ? promptLeftContainer : promptRightContainer);
@@ -38,12 +38,13 @@ public class RhythmUI : MonoBehaviour
                 !isLeft  ? promptLeftContainer : promptRightContainer);
             lastPromptTimeLocal = Time.time;
             
-            prompt2 = new InputPrompt();
-            prompt2.inputType = prompt.inputType;
-            prompt2.targetPosition = prompt.targetPosition;
-            prompt2.spawnPosition = prompt.spawnPosition;
-            prompt2.currentPosition = prompt.spawnPosition;
-            prompt2.isActive = prompt.isActive;
+            newPrompt = new InputPrompt();
+            newPrompt.inputType = prompt.inputType;
+            newPrompt.targetPosition = prompt.targetPosition;
+            newPrompt.spawnPosition = prompt.spawnPosition;
+            newPrompt.currentPosition = prompt.spawnPosition;
+            newPrompt.isActive = prompt.isActive;
+            newPrompt.isPressKey = true;
         }
         
         if (!canoeRight)
@@ -52,7 +53,7 @@ public class RhythmUI : MonoBehaviour
             SetupPrompt(promptObj1, promptObj2, prompt);
         StartCoroutine(AnimatePrompt(promptObj1, prompt1));
         if (promptObj2 != null)
-            StartCoroutine(AnimatePrompt(promptObj2, prompt2));
+            StartCoroutine(AnimatePrompt(promptObj2, newPrompt));
 
         return lastPromptTimeLocal;
     }
@@ -86,9 +87,9 @@ public class RhythmUI : MonoBehaviour
             bool isLeft = prompt.inputType == EInputType.Left;
             
             GameObject promptObj1 = Instantiate(promptPrefab, 
-                isLeft  ? promptLeftContainer : promptRightContainer);
+                isLeft  ? promptRightContainer : promptLeftContainer);
             GameObject promptObj2 = Instantiate(promptPrefab, 
-                isLeft  ? promptLeftContainer : promptRightContainer);
+                isLeft  ? promptRightContainer : promptLeftContainer);
             SetupPrompt(promptObj1, promptObj2, prompt);
             StartCoroutine(AnimatePrompt(promptObj1, prompt1));
             StartCoroutine(AnimatePrompt(promptObj2, prompt2));

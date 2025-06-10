@@ -30,6 +30,7 @@ public class CanoeController : MonoBehaviour
     [Header("Rotation Alignment (Read-Only)")]
     public float rotationDirection; // -1 = opposite direction, 0 = perpendicular, 1 = perfect alignment
     public bool isRotatingRight;    // Which way we're turning
+    public bool isRotatingRightDelayed;    
     
     private ECanoeState canoeState = ECanoeState.straight;
     private ECanoeState delayedState = ECanoeState.straight;
@@ -67,7 +68,7 @@ public class CanoeController : MonoBehaviour
             GoToNextPoint();
         }
         
-        GuiDebug.Instance.PrintFloat("rotationDirection", rotationDirection);
+        //GuiDebug.Instance.PrintFloat("rotationDirection", rotationDirection);
         GuiDebug.Instance.PrintString("canoe state", canoeState.ToString());
         GuiDebug.Instance.PrintString("delayed state", delayedState.ToString());
     }
@@ -102,7 +103,7 @@ public class CanoeController : MonoBehaviour
 
     void SetCurrentState()
     {
-        GuiDebug.Instance.PrintString("state", canoeState.ToString());
+        //GuiDebug.Instance.PrintString("state", canoeState.ToString());
         
         if (rotationDirection > straightThreshold)
         {
@@ -148,32 +149,32 @@ public class CanoeController : MonoBehaviour
     {
         if (newState != canoeState)
         {
-            //Debug.Log("state changed from : " + canoeState + newState);
+            //Debug.Log("state changed from : " + canoeState + " to : " + newState);
             //State Change
             canoeState = newState;
-        }
 
-        if (canoeState == ECanoeState.hardTurning)
-        {
-            rotationSpeed = canoeParams.turnRotationSpeed;
+            StartCoroutine(ChangeDelayedState());
+            
+            if (canoeState == ECanoeState.hardTurning)
+            {
+                rotationSpeed = canoeParams.turnRotationSpeed;
+            }
+            else
+            {
+                rotationSpeed = canoeParams.regRotationSpeed;
+            }            
         }
-        else
-        {
-            rotationSpeed = canoeParams.regRotationSpeed;
-        }
-
-        //if (delayedStateCoroutine != null)
-        //    StopCoroutine(delayedStateCoroutine);
-        delayedStateCoroutine = StartCoroutine(ChangeDelayedState());
     }
     
     IEnumerator ChangeDelayedState()
     {
         ECanoeState newDelayedState = canoeState;
+        bool isRotatinRight = isRotatingRight;
         yield return new WaitForSeconds(stateDelayTime);
     
         delayedState = newDelayedState;
-        Debug.Log($"State changed to: {canoeState}");
+        isRotatingRightDelayed = isRotatinRight;
+        //Debug.Log($"Coroutine :: State changed to: {newDelayedState}");
 
         Material material = perfectSpot.gameObject.GetComponent<Renderer>().material;
         switch (delayedState)
