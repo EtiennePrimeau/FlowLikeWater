@@ -37,6 +37,10 @@ public class RhythmInputSystem : MonoBehaviour
     public void GeneratePrompts()
     {
         EInputType inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
+        
+        if (canoe.CurrentState == ECanoeState.hardTurning)
+            Debug.Log($"Hard Turn - isRotatingRight: {canoe.isRotatingRight}, InputType: {inputType}");
+
         Vector3 targetPos = GetTargetZonePosition();
         Vector3 spawnPos = targetPos + canoe.transform.forward * spawnDistance;
         List<PromptObject> newPrompts = new List<PromptObject>();
@@ -49,10 +53,10 @@ public class RhythmInputSystem : MonoBehaviour
             
             // Spawn prompts and get the GameObjects back
             newPrompts = rhythmUI.ShowPromptHardTurn(inputType, spawnPos, targetPos, 
-                lastPromptTime, promptInterval, canoe.isRotatingRight);
+                lastPromptTime, promptInterval, out bool pressKeyCreated);
             
             activePrompts.AddRange(newPrompts);
-            if (newPrompts.Count > 0) lastPromptTime = Time.time;
+            if (pressKeyCreated) lastPromptTime = Time.time;
             
             return;
         }
@@ -86,7 +90,7 @@ public class RhythmInputSystem : MonoBehaviour
             case ECanoeState.turning:
                 return isRight ? EInputType.Right : EInputType.Left;
             case ECanoeState.hardTurning:
-                return isRight ? EInputType.LeftHard : EInputType.RightHard;
+                return isRight ? EInputType.RightHard : EInputType.LeftHard;
             default:
                 Debug.LogError("Unknown state: " + canoe.CurrentState);
                 return EInputType.StraightLeft;

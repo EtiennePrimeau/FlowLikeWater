@@ -98,7 +98,7 @@ public class CanoeController : MonoBehaviour
             
             // Still calculate which way we're turning for other systems that might need it
             float signedAngle = Vector3.SignedAngle(forwardDirection, targetDirection, Vector3.up);
-            isRotatingRight = signedAngle < 0f;
+            isRotatingRight = signedAngle > 0f;
         }
         else
         {

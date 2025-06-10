@@ -21,25 +21,30 @@ public class RhythmUI : MonoBehaviour
     }
 
     public List<PromptObject> ShowPromptHardTurn(EInputType inputType, Vector3 spawnPos, Vector3 targetPos, 
-        float lastPromptTime, float promptInterval, bool canoeRight)
+        float lastPromptTime, float promptInterval, out bool pressKeyCreated)
     {
         var prompts = new List<PromptObject>();
         bool isLeft = inputType == EInputType.LeftHard;
+        pressKeyCreated = false;
         
         // Always create first prompt
         GameObject promptObj1 = Instantiate(promptPrefab, 
             isLeft ? promptLeftContainer : promptRightContainer);
-        var prompt1 = SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, isLeft);
+        var prompt1 = SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, !isLeft);
         prompts.Add(prompt1);
-        
+
+        //Debug.Log(Time.time + "  " + lastPromptTime);
+        //Debug.Log(Time.time - lastPromptTime);
         // Create second prompt if enough time has passed
         if (Time.time - lastPromptTime > promptInterval)
         {
+            Debug.Log("here " + isLeft);
             GameObject promptObj2 = Instantiate(promptPrefab, 
-                !isLeft ? promptLeftContainer : promptRightContainer);
+                isLeft ? promptRightContainer : promptLeftContainer);
             var prompt2 = SetupPromptObject(promptObj2, inputType, spawnPos, targetPos, isLeft);
             prompt2.canBePressed = true;
             prompts.Add(prompt2);
+            pressKeyCreated = true;
         }
         
         return prompts;
@@ -128,7 +133,7 @@ public class RhythmUI : MonoBehaviour
                 text.color = Color.red;
                 break;
             case EInputType.RightHard:
-                text.text = !isRight ? "C" : "I";
+                text.text = !isRight ? "I" : "C";
                 text.color = Color.red;
                 break;
         }
