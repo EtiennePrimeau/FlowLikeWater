@@ -45,7 +45,6 @@ public class RhythmInputSystem : MonoBehaviour
             activePrompts.Add(hprompt);
             lastPromptTime = rhythmUI.ShowPromptHardTurn(hprompt, lastPromptTime, promptInterval, canoe.isRotatingRight);
             
-            Debug.Log("return");
             return;
         }
         

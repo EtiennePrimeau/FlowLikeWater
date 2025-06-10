@@ -50,7 +50,7 @@ public class CameraController : MonoBehaviour
         );
         
         // Smooth rotation to look at target
-        Vector3 direction = (canoe.CurrentTarget - transform.position).normalized;
+        Vector3 direction = (target.transform.position - transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(
             transform.rotation, 

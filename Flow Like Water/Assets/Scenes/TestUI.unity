@@ -964,7 +964,7 @@ MonoBehaviour:
   canoe: {fileID: 1916620368}
   rhythmUI: {fileID: 1726198652}
   targetZone: {fileID: 17476953}
-  spawnDistance: 300
+  spawnDistance: 50
   promptInterval: 2
   perfectZoneSize: 50
   goodZoneSize: 100
@@ -1428,7 +1428,7 @@ MonoBehaviour:
   - {fileID: 785661435}
   - {fileID: 2067475440}
   - {fileID: 336367632}
-  rotationSpeed: 20
+  canoeParams: {fileID: 11400000, guid: 8379b212a7774474aa5174b6f0f43084, type: 2}
   arrivalDistance: 5
   turnThreshold: 0.2
   straightThreshold: 0.9

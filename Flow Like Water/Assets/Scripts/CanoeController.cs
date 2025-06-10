@@ -11,10 +11,11 @@ public class CanoeController : MonoBehaviour
     public List<Transform> points = new List<Transform>();
     
     [Header("Settings")]
-    public float rotationSpeed = 50f;
+    public CanoeParams canoeParams;
     public float arrivalDistance = 2f;
     public float turnThreshold = .4f;
     public float straightThreshold = .9f;
+    
     
     [Header("Debug")]
     public bool showDebug = true;
@@ -26,7 +27,10 @@ public class CanoeController : MonoBehaviour
     public bool isRotatingRight;    // Which way we're turning
     
     private ECanoeState canoeState = ECanoeState.straight;
-
+    private float rotationSpeed = 20f;
+    
+    
+    
     public Vector3 CurrentTarget => _currentTarget;
     
     private Vector3 _currentTarget;
@@ -127,15 +131,23 @@ public class CanoeController : MonoBehaviour
         }
     }
 
-
     void ChangeState(ECanoeState newState)
     {
         if (newState != canoeState)
         {
-            Debug.Log("state changed from : " + canoeState + newState);
+            //Debug.Log("state changed from : " + canoeState + newState);
             //State Change
             canoeState = newState;
             rhythmInputSystem.GeneratePrompts();
+        }
+
+        if (canoeState == ECanoeState.hardTurning)
+        {
+            rotationSpeed = canoeParams.turnRotationSpeed;
+        }
+        else
+        {
+            rotationSpeed = canoeParams.regRotationSpeed;
         }
     }
     
