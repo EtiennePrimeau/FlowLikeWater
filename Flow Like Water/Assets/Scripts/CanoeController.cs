@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -6,6 +8,8 @@ public enum ECanoeState { straight, turning, hardTurning }
 public class CanoeController : MonoBehaviour
 {
     public RhythmInputSystem rhythmInputSystem;
+    public RhythmUI rhythmUI;
+    public Transform perfectSpot;
     
     [Header("Waypoints")]
     public List<Transform> points = new List<Transform>();
@@ -15,6 +19,7 @@ public class CanoeController : MonoBehaviour
     public float arrivalDistance = 2f;
     public float turnThreshold = .4f;
     public float straightThreshold = .9f;
+    public float stateDelayTime = 1f;
     
     
     [Header("Debug")]
@@ -27,16 +32,22 @@ public class CanoeController : MonoBehaviour
     public bool isRotatingRight;    // Which way we're turning
     
     private ECanoeState canoeState = ECanoeState.straight;
+    private ECanoeState delayedState = ECanoeState.straight;
     private float rotationSpeed = 20f;
-    
-    
+    private Vector3 _currentTarget;
+    private Coroutine delayedStateCoroutine;
     
     public Vector3 CurrentTarget => _currentTarget;
     
-    private Vector3 _currentTarget;
-    
     public ECanoeState CurrentState => canoeState;
-    
+    public ECanoeState DelayedState => delayedState;
+
+
+    private void Start()
+    {
+        stateDelayTime = rhythmInputSystem.spawnDistance / rhythmUI.fallSpeed - 0.4f;
+    }
+
     void Update()
     {
         if (points.Count == 0) return;
@@ -57,6 +68,8 @@ public class CanoeController : MonoBehaviour
         }
         
         GuiDebug.Instance.PrintFloat("rotationDirection", rotationDirection);
+        GuiDebug.Instance.PrintString("canoe state", canoeState.ToString());
+        GuiDebug.Instance.PrintString("delayed state", delayedState.ToString());
     }
     
     void CalculateRotationAlignment(Vector3 target)
@@ -138,7 +151,6 @@ public class CanoeController : MonoBehaviour
             //Debug.Log("state changed from : " + canoeState + newState);
             //State Change
             canoeState = newState;
-            rhythmInputSystem.GeneratePrompts();
         }
 
         if (canoeState == ECanoeState.hardTurning)
@@ -148,6 +160,33 @@ public class CanoeController : MonoBehaviour
         else
         {
             rotationSpeed = canoeParams.regRotationSpeed;
+        }
+
+        //if (delayedStateCoroutine != null)
+        //    StopCoroutine(delayedStateCoroutine);
+        delayedStateCoroutine = StartCoroutine(ChangeDelayedState());
+    }
+    
+    IEnumerator ChangeDelayedState()
+    {
+        ECanoeState newDelayedState = canoeState;
+        yield return new WaitForSeconds(stateDelayTime);
+    
+        delayedState = newDelayedState;
+        Debug.Log($"State changed to: {canoeState}");
+
+        Material material = perfectSpot.gameObject.GetComponent<Renderer>().material;
+        switch (delayedState)
+        {
+            case ECanoeState.hardTurning:
+                material.color = Color.red;
+                break;
+            case ECanoeState.turning:
+                material.color = Color.yellow;
+                break;
+            case ECanoeState.straight:
+                material.color = Color.blue;
+                break;
         }
     }
     

@@ -38,7 +38,7 @@ public class RhythmInputSystem : MonoBehaviour
         if (canoe.CurrentState == ECanoeState.hardTurning)
         {
             InputPrompt hprompt = new InputPrompt();
-            hprompt.inputType = GetInputTypeFromCurrentState();
+            hprompt.inputType = GetInputTypeFromState(canoe.CurrentState);
             hprompt.targetPosition = GetTargetZonePosition();
             hprompt.spawnPosition = hprompt.targetPosition + Vector3.up * spawnDistance;
         
@@ -51,7 +51,7 @@ public class RhythmInputSystem : MonoBehaviour
         if (Time.time - lastPromptTime < promptInterval) return;
         
         InputPrompt prompt = new InputPrompt();
-        prompt.inputType = GetInputTypeFromCurrentState();
+        prompt.inputType = GetInputTypeFromState(canoe.CurrentState);
         prompt.targetPosition = GetTargetZonePosition();
         prompt.spawnPosition = prompt.targetPosition + Vector3.up * spawnDistance;
         
@@ -69,10 +69,10 @@ public class RhythmInputSystem : MonoBehaviour
         return canoe.transform.position + Vector3.up * 2f;
     }
 
-    EInputType GetInputTypeFromCurrentState()
+    EInputType GetInputTypeFromState(ECanoeState state)
     {
         bool isRight = canoe.isRotatingRight;
-        switch (canoe.CurrentState)
+        switch (state)
         {
             case ECanoeState.straight:
                 return isRight ? EInputType.StraightRight : EInputType.StraightLeft;
@@ -88,13 +88,18 @@ public class RhythmInputSystem : MonoBehaviour
     
     void HandleInput()
     {
+        if (canoe.DelayedState == ECanoeState.hardTurning)
+        {
+            CheckHardTurnInput(KeyCode.Z, KeyCode.P, EInputType.LeftHard);
+            CheckHardTurnInput(KeyCode.C, KeyCode.I, EInputType.RightHard);
+            return;
+        }
+        
         CheckInputCombination(KeyCode.Z, KeyCode.P, EInputType.StraightLeft);
         CheckInputCombination(KeyCode.C, KeyCode.I, EInputType.StraightRight);
         CheckInputCombination(KeyCode.C, KeyCode.P, EInputType.Left);
         CheckInputCombination(KeyCode.Z, KeyCode.I, EInputType.Right);
         
-        CheckHoldAndPress(KeyCode.Z, KeyCode.P, EInputType.LeftHard);
-        CheckHoldAndPress(KeyCode.C, KeyCode.I, EInputType.RightHard);
     }
 
     void CheckInputCombination(KeyCode key1, KeyCode key2, EInputType inputType)
@@ -118,12 +123,25 @@ public class RhythmInputSystem : MonoBehaviour
         CleanupOldKeyPresses();
     }
 
-    void CheckHoldAndPress(KeyCode holdKey, KeyCode pressKey, EInputType inputType)
+    void CheckHardTurnInput(KeyCode holdKey, KeyCode pressKey, EInputType inputType)
     {
-        if (Input.GetKey(holdKey) && Input.GetKeyDown(pressKey))
+        Debug.Log("Checking hard turn  " + holdKey);
+        bool holdingKey = false;
+        if (Input.GetKey(holdKey))
+        {
+            holdingKey = true;
+            Debug.Log("holding");
+        }
+        if (Input.GetKeyDown(pressKey))
+        {
+            keyPressTimes[pressKey] = Time.time;
+        }
+        
+        if (keyPressTimes.ContainsKey(pressKey) && holdingKey)
         {
             CheckInput(inputType);
         }
+        
     }
 
     void CleanupOldKeyPresses()
@@ -162,29 +180,25 @@ public class RhythmInputSystem : MonoBehaviour
         
         if (closestPrompt != null)
         {
-            string feedback;
-            if (closestDistance <= perfectZoneSize)
+            EInputType expectedInput = GetInputTypeFromState(canoe.DelayedState);
+        
+            if (inputType == expectedInput)
             {
-                feedback = "PERFECT!";
-                rhythmUI.ShowFeedback(feedback + " " + closestDistance.ToString("F1"));
-            }
-            else if (closestDistance <= goodZoneSize)
-            {
-                feedback = "GOOD!";
-                rhythmUI.ShowFeedback(feedback + " " + closestDistance.ToString("F1"));
+                if (closestDistance <= perfectZoneSize)
+                {
+                    rhythmUI.ShowFeedback("PERFECT!");
+                    closestPrompt.isActive = false;
+                }
+                else if (closestDistance <= goodZoneSize)
+                {
+                    rhythmUI.ShowFeedback("GOOD!");
+                    closestPrompt.isActive = false;
+                }
             }
             else
             {
-                feedback = "MISS";
-                rhythmUI.ShowFeedback(feedback + " " + closestDistance.ToString("F1"));
-                return; // Don't remove the prompt for misses
+                rhythmUI.ShowFeedback("WRONG INPUT!");
             }
-            
-            closestPrompt.isActive = false;
-        }
-        else
-        {
-            rhythmUI.ShowFeedback("NO PROMPT");
         }
     }
     
