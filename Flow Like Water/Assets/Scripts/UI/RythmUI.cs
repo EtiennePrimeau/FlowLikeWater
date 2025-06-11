@@ -67,8 +67,8 @@ public class RhythmUI : MonoBehaviour
             GameObject promptObj2 = Instantiate(promptPrefab, 
                 isLeft ? promptRightContainer : promptLeftContainer);
                 
-            prompts.Add(SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, isLeft));
-            prompts.Add(SetupPromptObject(promptObj2, inputType, spawnPos, targetPos, isLeft));
+            prompts.Add(SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, isLeft, true));
+            prompts.Add(SetupPromptObject(promptObj2, inputType, spawnPos, targetPos, isLeft, false));
         }
         else
         {
@@ -82,7 +82,7 @@ public class RhythmUI : MonoBehaviour
         return prompts;
     }
     
-    PromptObject SetupPromptObject(GameObject promptObj, EInputType inputType, Vector3 spawnPos, Vector3 targetPos, bool isRight)
+    PromptObject SetupPromptObject(GameObject promptObj, EInputType inputType, Vector3 spawnPos, Vector3 targetPos, bool isRight, bool isFront = false)
     {
         // Add PromptObject component
         PromptObject promptComponent = promptObj.GetComponent<PromptObject>();
@@ -94,21 +94,50 @@ public class RhythmUI : MonoBehaviour
         promptComponent.canBePressed = true;
         
         // Set initial position
-        Vector3 offset = CanoeController.Instance.transform.right * -5f;
-        if (isRight)
-            offset = CanoeController.Instance.transform.right * 5f;
+        
+        float strength = isRight ? 1 : -1;
+        strength *= PromptObject.OffsetStrength;
+        Vector3 offset = CanoeController.Instance.transform.right * strength;
+        
+        switch (inputType)
+        {
+            case EInputType.StraightLeft:
+                break;
+            case EInputType.StraightRight:
+                break;
+            case EInputType.Left:
+                if (isFront)
+                    offset *= 2f;
+                break;
+            case EInputType.Right:
+                if (isFront)
+                    offset *= 2f;
+                break;
+            case EInputType.LeftHard:
+                break;
+            case EInputType.RightHard:
+                break;
+        }
+        
+        
+        //Vector3 offset = CanoeController.Instance.transform.right * -PromptObject.OffsetStrength;
+        //if (isRight)
+        //    offset = CanoeController.Instance.transform.right * PromptObject.OffsetStrength;
         promptObj.transform.position = spawnPos + offset;
+
+        promptComponent.SetVisuals(inputType, isRight, isFront);
         
         // Setup visual text
-        SetupPromptVisual(promptObj, inputType, isRight);
+        //SetupPromptVisual(promptObj, inputType, isRight);
         
         return promptComponent;
     }
     
     void SetupPromptVisual(GameObject promptObj, EInputType inputType, bool isRight)
     {
-        var text = promptObj.GetComponentInChildren<TextMeshProUGUI>();
+        var text = promptObj.GetComponent<TextMeshProUGUI>();
         if (text == null) return;
+        
         
         switch (inputType)
         {

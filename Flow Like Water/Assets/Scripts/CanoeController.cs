@@ -53,7 +53,7 @@ public class CanoeController : MonoBehaviour
 
     private void Start()
     {
-        stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.fallSpeed - 0.4f;
+        stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.FallSpeed - 0.4f;
     }
 
     void Update()
