@@ -8,8 +8,7 @@ using System.Collections.Generic;
 public class RhythmUI : MonoBehaviour
 {
     [Header("UI Elements")]
-    public Transform promptLeftContainer;
-    public Transform promptRightContainer;
+    public Transform promptContainer;
     public GameObject promptPrefab;
     public TextMeshProUGUI feedbackText;
 
@@ -33,8 +32,7 @@ public class RhythmUI : MonoBehaviour
         // Always create first prompt
         if (Time.time - lastSpawnTimeHold > 0.1f)
         {
-            GameObject promptObj1 = Instantiate(promptPrefab, 
-                        isLeft ? promptLeftContainer : promptRightContainer);
+            GameObject promptObj1 = Instantiate(promptPrefab, promptContainer);
             var prompt1 = SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, !isLeft);
             prompts.Add(prompt1);
             lastSpawnTimeHold = Time.time;
@@ -46,9 +44,7 @@ public class RhythmUI : MonoBehaviour
         // Create second prompt if enough time has passed
         if (Time.time - lastPromptTime > promptInterval)
         {
-            Debug.Log("here " + isLeft);
-            GameObject promptObj2 = Instantiate(promptPrefab, 
-                isLeft ? promptRightContainer : promptLeftContainer);
+            GameObject promptObj2 = Instantiate(promptPrefab, promptContainer);
             var prompt2 = SetupPromptObject(promptObj2, inputType, spawnPos, targetPos, isLeft);
             prompt2.canBePressed = true;
             prompts.Add(prompt2);
@@ -70,18 +66,16 @@ public class RhythmUI : MonoBehaviour
         {
             bool isLeft = inputType == EInputType.Left;
             
-            GameObject promptObj1 = Instantiate(promptPrefab, 
-                isLeft ? promptRightContainer : promptLeftContainer);
-            GameObject promptObj2 = Instantiate(promptPrefab, 
-                isLeft ? promptRightContainer : promptLeftContainer);
+            GameObject promptObj1 = Instantiate(promptPrefab, promptContainer);
+            GameObject promptObj2 = Instantiate(promptPrefab, promptContainer);
                 
             prompts.Add(SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, isLeft, true));
             prompts.Add(SetupPromptObject(promptObj2, inputType, spawnPos, targetPos, isLeft, false));
         }
         else
         {
-            GameObject promptObjL = Instantiate(promptPrefab, promptLeftContainer);
-            GameObject promptObjR = Instantiate(promptPrefab, promptRightContainer);
+            GameObject promptObjL = Instantiate(promptPrefab, promptContainer);
+            GameObject promptObjR = Instantiate(promptPrefab, promptContainer);
             
             prompts.Add(SetupPromptObject(promptObjL, inputType, spawnPos, targetPos, false));
             prompts.Add(SetupPromptObject(promptObjR, inputType, spawnPos, targetPos, true));
@@ -132,6 +126,9 @@ public class RhythmUI : MonoBehaviour
         //if (isRight)
         //    offset = CanoeController.Instance.transform.right * PromptObject.OffsetStrength;
         promptObj.transform.position = spawnPos + offset;
+        promptObj.transform.position = new Vector3(promptObj.transform.position.x,
+                                                    0f,
+                                                    promptObj.transform.position.z);
 
         promptComponent.SetVisuals(inputType, isRight, isFront);
         

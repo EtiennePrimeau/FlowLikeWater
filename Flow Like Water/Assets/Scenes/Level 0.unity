@@ -475,6 +475,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1579420834 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2273405934944606188, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
+  m_PrefabInstance: {fileID: 2386565690987587884}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1726198652 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7305307505293856729, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
@@ -801,6 +806,10 @@ PrefabInstance:
       propertyPath: rhythmUI
       value: 
       objectReference: {fileID: 1726198652}
+    - target: {fileID: 4683994679612889640, guid: 0928a4bb440ece54a94e5f5d48130955, type: 3}
+      propertyPath: perfectSpot
+      value: 
+      objectReference: {fileID: 1579420834}
     - target: {fileID: 5106611231546008226, guid: 0928a4bb440ece54a94e5f5d48130955, type: 3}
       propertyPath: m_Name
       value: RythmInputSystem

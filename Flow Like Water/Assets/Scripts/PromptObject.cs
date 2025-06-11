@@ -29,7 +29,9 @@ public class PromptObject : MonoBehaviour
     void Update()
     {
         // Simple falling animation
-        transform.position += CanoeController.Instance.transform.forward * -FallSpeed * Time.deltaTime;
+        Vector3 newPos = transform.position + CanoeController.Instance.transform.forward * -FallSpeed * Time.deltaTime;
+        newPos = new Vector3(newPos.x, 0f, newPos.z);
+        transform.position = newPos;
         
         timer += Time.deltaTime;
         if  (timer >= maxTimer)
