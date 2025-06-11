@@ -36,7 +36,7 @@ public class CanoeController : MonoBehaviour
     
     private ECanoeState canoeState = ECanoeState.straight;
     private ECanoeState delayedState = ECanoeState.straight;
-    private float rotationSpeed = 20f;
+    private float rotationSpeed;
     private Vector3 _currentTarget;
     private Vector3 delayedTarget;
     private Coroutine delayedStateCoroutine;
@@ -55,6 +55,8 @@ public class CanoeController : MonoBehaviour
     private void Start()
     {
         stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.FallSpeed;
+        rotationSpeed = canoeParams.regRotationSpeed;
+        _currentTarget = points[0].position;
     }
 
     void Update()

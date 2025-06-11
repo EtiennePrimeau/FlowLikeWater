@@ -1527,8 +1527,8 @@ MonoBehaviour:
   - {fileID: 336367632}
   canoeParams: {fileID: 11400000, guid: 8379b212a7774474aa5174b6f0f43084, type: 2}
   arrivalDistance: 10
-  turnThreshold: 0.9
-  straightThreshold: 0.99
+  turnThreshold: 0.8
+  straightThreshold: 0.9
   stateDelayTime: 2.2
   showDebug: 1
   rotationDirection: 0

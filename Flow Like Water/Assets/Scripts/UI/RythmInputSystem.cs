@@ -38,8 +38,8 @@ public class RhythmInputSystem : MonoBehaviour
     {
         EInputType inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
         
-        if (canoe.CurrentState == ECanoeState.hardTurning)
-            Debug.Log($"Hard Turn - isRotatingRight: {canoe.isRotatingRight}, InputType: {inputType}");
+        //if (canoe.CurrentState == ECanoeState.hardTurning)
+        //    Debug.Log($"Hard Turn - isRotatingRight: {canoe.isRotatingRight}, InputType: {inputType}");
 
         Vector3 targetPos = GetTargetZonePosition();
         Vector3 spawnPos = targetPos + canoe.transform.forward * spawnDistance;
@@ -47,10 +47,6 @@ public class RhythmInputSystem : MonoBehaviour
         
         if (canoe.CurrentState == ECanoeState.hardTurning)
         {
-            //EInputType inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
-            //Vector3 targetPos = GetTargetZonePosition();
-            //Vector3 spawnPos = targetPos + Vector3.up * spawnDistance;
-            
             // Spawn prompts and get the GameObjects back
             newPrompts = rhythmUI.ShowPromptHardTurn(inputType, spawnPos, targetPos, 
                 lastPromptTime, promptInterval, out bool pressKeyCreated);
@@ -62,10 +58,6 @@ public class RhythmInputSystem : MonoBehaviour
         }
         
         if (Time.time - lastPromptTime < promptInterval) return;
-        
-        //EInputType inputType = GetInputTypeFromState(canoe.CurrentState, canoe.isRotatingRight);
-        //Vector3 targetPos = GetTargetZonePosition();
-        //Vector3 spawnPos = targetPos + Vector3.up * spawnDistance;
         
         // Spawn prompts and get the GameObjects back
         newPrompts = rhythmUI.ShowPrompt(inputType, spawnPos, targetPos);
