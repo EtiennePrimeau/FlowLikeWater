@@ -16,6 +16,10 @@ public class PromptObject : MonoBehaviour
     public List<Color> frontColors;
     public List<Color> backColors;
 
+    public GameObject distanceIndicator;
+    public GameObject text;
+    
+    
     private float timer;
     private float maxTimer = 5;
     private Material _material;
@@ -32,10 +36,24 @@ public class PromptObject : MonoBehaviour
         Vector3 newPos = transform.position + CanoeController.Instance.transform.forward * -FallSpeed * Time.deltaTime;
         newPos = new Vector3(newPos.x, 0f, newPos.z);
         transform.position = newPos;
-        
+
         timer += Time.deltaTime;
         if  (timer >= maxTimer)
             Destroy(gameObject);
+        
+        float t = timer / CanoeController.Instance.stateDelayTime;
+        if (t > 1)
+        {
+            Destroy(text);
+            return;
+        }
+        
+        float size = Mathf.Lerp(0, 1, t);
+        Vector3 scale = new Vector3(size, size, size);
+        text.transform.localScale = scale;
+        
+        float y = Mathf.Lerp(1, 3, t);
+        text.transform.localPosition = new Vector3(text.transform.localPosition.x, y, text.transform.localPosition.z);
     }
     
     public void SetVisuals(EInputType inputType, bool isRight, bool isFront)

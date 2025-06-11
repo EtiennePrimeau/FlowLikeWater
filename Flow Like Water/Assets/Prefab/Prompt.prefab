@@ -158,6 +158,8 @@ MonoBehaviour:
   backColors:
   - {r: 0.06926012, g: 1, b: 0, a: 0.78431374}
   - {r: 1, g: 0.8110068, b: 0, a: 0.78431374}
+  distanceIndicator: {fileID: 0}
+  text: {fileID: 8843312726962797447}
 --- !u!33 &139768954701102559
 MeshFilter:
   m_ObjectHideFlags: 0
