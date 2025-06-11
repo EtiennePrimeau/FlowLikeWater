@@ -15,11 +15,9 @@ public class RhythmUI : MonoBehaviour
 
     //public float fallSpeed;
     
-    // Frame counter for hard turn hold key spawning
-    private static int hardTurnFrameCounter = 0;
-    private const int HARD_TURN_SPAWN_INTERVAL = 30; // Spawn every 5th frame
-
     private float lastSpawnTimeHold;
+    
+    
     private void Start()
     {
         //fallSpeed = promptPrefab.GetComponent<PromptObject>().GetSpeed();
@@ -42,17 +40,6 @@ public class RhythmUI : MonoBehaviour
             lastSpawnTimeHold = Time.time;
         }
         
-        
-        
-        //hardTurnFrameCounter++;
-        // Only create first prompt (hold key) every 5th frame
-        //if (hardTurnFrameCounter % HARD_TURN_SPAWN_INTERVAL == 0)
-        //{
-        //    GameObject promptObj1 = Instantiate(promptPrefab, 
-        //        isLeft ? promptLeftContainer : promptRightContainer);
-        //    var prompt1 = SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, !isLeft);
-        //    prompts.Add(prompt1);
-        //}
 
         //Debug.Log(Time.time + "  " + lastPromptTime);
         //Debug.Log(Time.time - lastPromptTime);
