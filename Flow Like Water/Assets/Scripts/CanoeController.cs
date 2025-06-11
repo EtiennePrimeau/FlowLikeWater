@@ -38,6 +38,7 @@ public class CanoeController : MonoBehaviour
     private ECanoeState delayedState = ECanoeState.straight;
     private float rotationSpeed = 20f;
     private Vector3 _currentTarget;
+    private Vector3 delayedTarget;
     private Coroutine delayedStateCoroutine;
     
     public Vector3 CurrentTarget => _currentTarget;
@@ -53,7 +54,7 @@ public class CanoeController : MonoBehaviour
 
     private void Start()
     {
-        stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.FallSpeed - 0.4f;
+        stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.FallSpeed;
     }
 
     void Update()
@@ -159,29 +160,29 @@ public class CanoeController : MonoBehaviour
             //Debug.Log("state changed from : " + canoeState + " to : " + newState);
             //State Change
             canoeState = newState;
-
-            StartCoroutine(ChangeDelayedState());
             
-            if (canoeState == ECanoeState.hardTurning)
-            {
-                rotationSpeed = canoeParams.turnRotationSpeed;
-            }
-            else
-            {
-                rotationSpeed = canoeParams.regRotationSpeed;
-            }            
+            StartCoroutine(ChangeDelayedState());
+            GuiDebug.Instance.PrintFloat("rot speed", rotationSpeed);
+                        
         }
     }
     
     IEnumerator ChangeDelayedState()
     {
+        Vector3 newTarget = _currentTarget;
         ECanoeState newDelayedState = canoeState;
         bool isRotatinRight = isRotatingRight;
         yield return new WaitForSeconds(stateDelayTime);
     
         delayedState = newDelayedState;
         isRotatingRightDelayed = isRotatinRight;
+        delayedTarget = newTarget;
         //Debug.Log($"Coroutine :: State changed to: {newDelayedState}");
+        
+        if (delayedState == ECanoeState.hardTurning)
+            rotationSpeed = canoeParams.turnRotationSpeed;
+        else
+            rotationSpeed = canoeParams.regRotationSpeed;
 
         Material material = perfectSpot.gameObject.GetComponent<Renderer>().material;
         switch (delayedState)
@@ -201,6 +202,12 @@ public class CanoeController : MonoBehaviour
     void OnDrawGizmos()
     {
         if (!showDebug || points.Count == 0) return;
+
+        if (delayedTarget != Vector3.zero)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(delayedTarget, 1f);
+        }
         
         // Draw all points
         for (int i = 0; i < points.Count; i++)

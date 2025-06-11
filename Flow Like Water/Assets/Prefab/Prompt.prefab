@@ -112,7 +112,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8818221574778881121}
   - component: {fileID: 4333598780052757124}
-  - component: {fileID: 3669352047943213199}
   - component: {fileID: 139768954701102559}
   - component: {fileID: 8964509354002700120}
   m_Layer: 5
@@ -163,26 +162,6 @@ MonoBehaviour:
   backColors:
   - {r: 0.06926012, g: 1, b: 0, a: 0.78431374}
   - {r: 1, g: 0.8110068, b: 0, a: 0.78431374}
---- !u!114 &3669352047943213199
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3892565828220613693}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 788b68b263f44fb4c9cf0d8a95820e42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waterLevel: 0
-  buoyancyForce: 10
-  waterDrag: 0.5
-  waterAngularDrag: 0.8
-  wobbleStrength: 0.3
-  wobbleSpeed: 1.5
-  buoyancyVariation: 0.2
-  buoyancyPoints: []
 --- !u!33 &139768954701102559
 MeshFilter:
   m_ObjectHideFlags: 0
