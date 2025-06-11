@@ -25,6 +25,8 @@ public class RhythmInputSystem : MonoBehaviour
     public List<PromptObject> activePrompts = new List<PromptObject>(); // Track actual prefabs
     private float lastPromptTime;
     
+    private EInputType expectedStraightInput;
+    
     void Update()
     {
         if (canoe == null) return;
@@ -61,6 +63,10 @@ public class RhythmInputSystem : MonoBehaviour
         
         // Spawn prompts and get the GameObjects back
         newPrompts = rhythmUI.ShowPrompt(inputType, spawnPos, targetPos);
+        
+        
+        
+        
         activePrompts.AddRange(newPrompts);
         lastPromptTime = Time.time;
     }
@@ -78,7 +84,13 @@ public class RhythmInputSystem : MonoBehaviour
         switch (state)
         {
             case ECanoeState.straight:
-                return isRight ? EInputType.StraightRight : EInputType.StraightLeft;
+
+                // Generate random prompt for straight state
+                EInputType randomStraightInput = (UnityEngine.Random.Range(0, 2) == 0) ? 
+                    EInputType.StraightLeft : EInputType.StraightRight;
+                expectedStraightInput = randomStraightInput;
+                return randomStraightInput; 
+                
             case ECanoeState.turning:
                 return isRight ? EInputType.Right : EInputType.Left;
             case ECanoeState.hardTurning:
@@ -174,19 +186,18 @@ public class RhythmInputSystem : MonoBehaviour
             GuiDebug.Instance.PrintFloat("distance", closestDistance);
             Debug.DrawLine(closestPrompt.transform.position, targetPos, Color.magenta, 10f);
             
-            EInputType expectedInput = GetInputTypeFromState(canoe.DelayedState, canoe.isRotatingRightDelayed);
-        
+            EInputType expectedInput = closestPrompt.inputType;
+            Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
+
             if (inputType == expectedInput)
             {
                 if (closestDistance <= perfectZoneSize)
                 {
                     rhythmUI.ShowFeedback($"PERFECT! {closestDistance:F1}");
-                    Destroy(closestPrompt.gameObject);
                 }
                 else if (closestDistance <= goodZoneSize)
                 {
                     rhythmUI.ShowFeedback($"GOOD! {closestDistance:F1}");
-                    Destroy(closestPrompt.gameObject);
                 }
                 else
                 {
@@ -197,6 +208,26 @@ public class RhythmInputSystem : MonoBehaviour
             {
                 rhythmUI.ShowFeedback($"WRONG INPUT! {expectedInput}");
             }
+        }
+    }
+    
+    // New method to get expected input type based on delayed state
+    EInputType GetExpectedInputType()
+    {
+        switch (canoe.DelayedState)
+        {
+            case ECanoeState.straight:
+                // For straight state, use the stored expected input from when prompt was generated
+                return expectedStraightInput;
+                
+            case ECanoeState.turning:
+                return canoe.isRotatingRightDelayed ? EInputType.Right : EInputType.Left;
+                
+            case ECanoeState.hardTurning:
+                return canoe.isRotatingRightDelayed ? EInputType.RightHard : EInputType.LeftHard;
+                
+            default:
+                return EInputType.StraightLeft;
         }
     }
     
