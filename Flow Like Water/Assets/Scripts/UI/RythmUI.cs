@@ -10,6 +10,7 @@ public class RhythmUI : MonoBehaviour
     [Header("UI Elements")]
     public Transform promptContainer;
     public GameObject promptPrefab;
+    public GameObject feedbackPopupPrefab;
     public TextMeshProUGUI feedbackText;
 
     //public float fallSpeed;
@@ -30,10 +31,11 @@ public class RhythmUI : MonoBehaviour
         pressKeyCreated = false;
         
         // Always create first prompt
-        if (Time.time - lastSpawnTimeHold > 0.1f)
+        if (Time.time - lastSpawnTimeHold > 0.05f)
         {
             GameObject promptObj1 = Instantiate(promptPrefab, promptContainer);
             var prompt1 = SetupPromptObject(promptObj1, inputType, spawnPos, targetPos, !isLeft);
+            prompt1.canBePressed = false;
             prompts.Add(prompt1);
             lastSpawnTimeHold = Time.time;
         }
@@ -173,10 +175,32 @@ public class RhythmUI : MonoBehaviour
         }
     }
     
-    public void ShowFeedback(string message)
+        public void ShowFeedbackPopup(Vector3 spawnPosition, FeedbackType type, float distance = 0f, string customMessage = "")
     {
-        if (feedbackText != null)
-            StartCoroutine(ShowFeedbackCoroutine(message));
+        if (feedbackPopupPrefab == null) return;
+        
+        // Instantiate popup
+        GameObject popupObj = Instantiate(feedbackPopupPrefab, spawnPosition + CanoeController.Instance.transform.forward * 5f,
+                                            Quaternion.LookRotation(CanoeController.Instance.transform.forward), promptContainer);
+        FeedbackPopup popup = popupObj.GetComponent<FeedbackPopup>();
+        
+        if (popup != null)
+        {
+            // Initialize the popup based on feedback type
+            if (type == FeedbackType.Wrong)
+                popup.Initialize(type, customMessage);
+            else
+                popup.Initialize(type, "", distance);
+        }
+    }
+    
+    private float ExtractDistanceFromMessage(string message)
+    {
+        // Extract distance value from messages like "PERFECT! 5.2"
+        string[] parts = message.Split(' ');
+        if (parts.Length > 1 && float.TryParse(parts[1], out float distance))
+            return distance;
+        return 0f;
     }
     
     IEnumerator ShowFeedbackCoroutine(string message)

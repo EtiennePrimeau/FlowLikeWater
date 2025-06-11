@@ -12,11 +12,11 @@ public class PromptObject : MonoBehaviour
     public bool canBePressed = true;
     //public float fallSpeed = 150f;
     public Vector3 targetPosition;
+    public float dotLimit = -0.5f;
     
     public List<Color> frontColors;
     public List<Color> backColors;
 
-    public GameObject distanceIndicator;
     public GameObject text;
     
     
@@ -38,8 +38,15 @@ public class PromptObject : MonoBehaviour
         transform.position = newPos;
 
         timer += Time.deltaTime;
-        if  (timer >= maxTimer)
+        //if  (timer >= maxTimer)
+        //    Destroy(gameObject);
+        
+        Vector3 direction = (transform.position - CanoeController.Instance.transform.position).normalized;
+        Debug.DrawRay(transform.position, direction, Color.red);
+        if (Vector3.Dot(CanoeController.Instance.transform.forward, direction) < dotLimit)
+        {
             Destroy(gameObject);
+        }
         
         float t = timer / CanoeController.Instance.stateDelayTime;
         if (t > 1)

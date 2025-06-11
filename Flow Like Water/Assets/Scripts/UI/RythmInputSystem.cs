@@ -187,26 +187,27 @@ public class RhythmInputSystem : MonoBehaviour
             Debug.DrawLine(closestPrompt.transform.position, targetPos, Color.magenta, 10f);
             
             EInputType expectedInput = closestPrompt.inputType;
-            Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
+            //Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
 
             if (inputType == expectedInput)
             {
                 if (closestDistance <= perfectZoneSize)
                 {
-                    rhythmUI.ShowFeedback($"PERFECT! {closestDistance:F1}");
+                    rhythmUI.ShowFeedbackPopup(closestPrompt.transform.position,FeedbackType.Perfect, closestDistance);
                 }
                 else if (closestDistance <= goodZoneSize)
                 {
-                    rhythmUI.ShowFeedback($"GOOD! {closestDistance:F1}");
+                    rhythmUI.ShowFeedbackPopup(closestPrompt.transform.position,FeedbackType.Good, closestDistance);
                 }
                 else
                 {
-                    rhythmUI.ShowFeedback($"TOO FAR! {closestDistance:F1}");
+                    rhythmUI.ShowFeedbackPopup(CanoeController.Instance.transform.position,FeedbackType.Bad, closestDistance);
                 }
             }
             else
             {
-                rhythmUI.ShowFeedback($"WRONG INPUT! {expectedInput}");
+                Vector3 pos = CanoeController.Instance.transform.position + Vector3.up * 2f;
+                rhythmUI.ShowFeedbackPopup(Vector3.zero, FeedbackType.Wrong, 0, "WRONG INPUT");
             }
         }
     }

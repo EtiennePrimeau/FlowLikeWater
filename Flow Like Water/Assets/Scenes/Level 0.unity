@@ -741,6 +741,10 @@ PrefabInstance:
       propertyPath: 'points.Array.data[5]'
       value: 
       objectReference: {fileID: 336367632}
+    - target: {fileID: 1371069520914861256, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4137187518413888104, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -785,6 +789,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canoe
       objectReference: {fileID: 0}
+    - target: {fileID: 7305307505293856729, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
+      propertyPath: feedbackPopupPrefab
+      value: 
+      objectReference: {fileID: 7324452436783336315, guid: 24be0b264cd9629409d61447fdb40a1c, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

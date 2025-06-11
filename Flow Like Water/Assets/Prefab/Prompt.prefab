@@ -152,6 +152,7 @@ MonoBehaviour:
   inputType: 0
   canBePressed: 1
   targetPosition: {x: 0, y: 0, z: 0}
+  dotLimit: -0.6
   frontColors:
   - {r: 0.58178806, g: 0, b: 1, a: 1}
   - {r: 1, g: 0, b: 0.26845217, a: 0.78431374}
