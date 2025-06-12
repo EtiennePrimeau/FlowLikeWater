@@ -11,6 +11,8 @@ public class RhythmInputSystem : MonoBehaviour
     public CanoeController canoe;
     public RhythmUI rhythmUI;
     public Transform perfectSpot; // The zone where timing is perfect
+    public CharacterAnimator frontAnimator;
+    public CharacterAnimator backAnimator;
     
     [Header("Position Settings")]
     public float spawnDistance = 300f;
@@ -114,14 +116,26 @@ public class RhythmInputSystem : MonoBehaviour
         CheckInputCombination(KeyCode.N, KeyCode.R, EInputType.StraightRight);
         CheckInputCombination(KeyCode.V, KeyCode.R, EInputType.Left);
         CheckInputCombination(KeyCode.U, KeyCode.N, EInputType.Right);
+
+        if (Input.GetKeyDown(KeyCode.V))
+            backAnimator.TriggerLeftPaddle();
+        if (Input.GetKeyDown(KeyCode.R))
+            frontAnimator.TriggerLeftPaddle();
+        if (Input.GetKeyDown(KeyCode.U))
+            frontAnimator.TriggerRightPaddle();
+        if (Input.GetKeyDown(KeyCode.N))
+            backAnimator.TriggerRightPaddle();
     }
 
     void CheckInputCombination(KeyCode key1, KeyCode key2, EInputType inputType)
     {
         if (Input.GetKeyDown(key1))
             keyPressTimes[key1] = Time.time;
+
         if (Input.GetKeyDown(key2))
             keyPressTimes[key2] = Time.time;
+
+    
 
         if (keyPressTimes.ContainsKey(key1) && keyPressTimes.ContainsKey(key2))
         {
