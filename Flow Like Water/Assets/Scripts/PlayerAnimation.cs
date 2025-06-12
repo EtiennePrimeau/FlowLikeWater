@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CharacterAnimator : MonoBehaviour
@@ -50,6 +51,7 @@ public class CharacterAnimator : MonoBehaviour
             animator.SetBool(HOLD_LEFT, true);
         if (paddleAnimator != null)
             paddleAnimator.SetBool(HOLD_LEFT, true);
+        StartCoroutine(SetAnimatorSpeedCoroutine(1f, true));
     }
     
     public void TriggerRightHold()
@@ -58,6 +60,7 @@ public class CharacterAnimator : MonoBehaviour
             animator.SetBool(HOLD_RIGHT, true);
         if (paddleAnimator != null)
             paddleAnimator.SetBool(HOLD_RIGHT, true);
+        StartCoroutine(SetAnimatorSpeedCoroutine(1f, true));
     }
     
     public void TriggerLeftRelease()
@@ -66,6 +69,7 @@ public class CharacterAnimator : MonoBehaviour
             animator.SetBool(HOLD_LEFT, false);
         if (paddleAnimator != null)
             paddleAnimator.SetBool(HOLD_LEFT, false);
+        StartCoroutine(SetAnimatorSpeedCoroutine(0.1f, false));
     }
     
     public void TriggerRightRelease()
@@ -74,6 +78,7 @@ public class CharacterAnimator : MonoBehaviour
             animator.SetBool(HOLD_RIGHT, false);
         if (paddleAnimator != null)
             paddleAnimator.SetBool(HOLD_RIGHT, false);
+        StartCoroutine(SetAnimatorSpeedCoroutine(0.1f, false));
     }
     
     // Optional: Get current animation state
@@ -90,5 +95,14 @@ public class CharacterAnimator : MonoBehaviour
     public bool IsInRightPaddle()
     {
         return animator.GetCurrentAnimatorStateInfo(0).IsName("PaddleRight");
+    }
+
+    IEnumerator SetAnimatorSpeedCoroutine(float time, bool isStopping)
+    {
+        
+        yield return new WaitForSeconds(time);
+        
+        animator.speed = isStopping ? 0 : 1;
+        paddleAnimator.speed = isStopping ? 0 : 1;
     }
 }

@@ -864,6 +864,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5168587028679106324, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 334b672d67ec23c4c82fee95d0c022b2, type: 2}
+    - target: {fileID: 6389818875673006696, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9d8365ccb64938f4cb947acff983df1c, type: 2}
     - target: {fileID: 6590426948758235941, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
       propertyPath: m_Name
       value: Canoe

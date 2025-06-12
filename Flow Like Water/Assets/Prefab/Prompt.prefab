@@ -154,12 +154,11 @@ MonoBehaviour:
   targetPosition: {x: 0, y: 0, z: 0}
   dotLimit: -0.6
   frontColors:
-  - {r: 0.58178806, g: 0, b: 1, a: 1}
-  - {r: 1, g: 0, b: 0.26845217, a: 0.78431374}
+  - {r: 1, g: 0.8117647, b: 0, a: 0.78431374}
+  - {r: 1, g: 0, b: 0.4570942, a: 0.78431374}
   backColors:
-  - {r: 0.06926012, g: 1, b: 0, a: 0.78431374}
+  - {r: 0.5803922, g: 0, b: 1, a: 1}
   - {r: 1, g: 0.8110068, b: 0, a: 0.78431374}
-  distanceIndicator: {fileID: 0}
   text: {fileID: 8843312726962797447}
 --- !u!33 &139768954701102559
 MeshFilter:
