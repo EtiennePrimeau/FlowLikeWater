@@ -4,6 +4,7 @@ public class CharacterAnimator : MonoBehaviour
 {
     [Header("Animation Controller")]
     public Animator animator;
+    public Animator paddleAnimator;
 
     public bool isFront;
     
@@ -17,6 +18,8 @@ public class CharacterAnimator : MonoBehaviour
     {
         if (animator == null)
             animator = GetComponent<Animator>();
+        if (paddleAnimator == null)
+            paddleAnimator = GetComponent<Animator>();
 
         if (isFront)
             animator.speed = 0.9f;
@@ -26,12 +29,16 @@ public class CharacterAnimator : MonoBehaviour
     {
         if (animator != null)
             animator.SetTrigger(TRIGGER_LEFT);
+        if (paddleAnimator != null)
+            paddleAnimator.SetTrigger(TRIGGER_LEFT);
     }
     
     public void TriggerRightPaddle()
     {
         if (animator != null)
             animator.SetTrigger(TRIGGER_RIGHT);
+        if (paddleAnimator != null)
+            paddleAnimator.SetTrigger(TRIGGER_RIGHT);
     }
     
     // Optional: Get current animation state
