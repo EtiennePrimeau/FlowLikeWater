@@ -55,7 +55,7 @@ public class CanoeController : MonoBehaviour
     private void Start()
     {
         stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.FallSpeed - 0.5f;
-        rotationSpeed = canoeParams.regRotationSpeed;
+        ChangeState(ECanoeState.straight);
         _currentTarget = points[0].position;
     }
 
@@ -114,6 +114,7 @@ public class CanoeController : MonoBehaviour
     void SetCurrentState()
     {
         //GuiDebug.Instance.PrintString("state", canoeState.ToString());
+        GuiDebug.Instance.PrintFloat("rot dir", rotationDirection);
         
         if (rotationDirection > straightThreshold)
         {
@@ -183,8 +184,10 @@ public class CanoeController : MonoBehaviour
         
         if (delayedState == ECanoeState.hardTurning)
             rotationSpeed = canoeParams.turnRotationSpeed;
-        else
+        else if (delayedState == ECanoeState.turning)
             rotationSpeed = canoeParams.regRotationSpeed;
+        else
+            rotationSpeed = 1;
 
         Material material = perfectSpot.gameObject.GetComponent<Renderer>().material;
         switch (delayedState)
