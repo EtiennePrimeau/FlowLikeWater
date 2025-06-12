@@ -111,7 +111,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2273405934944606188
 Transform:
   m_ObjectHideFlags: 0
@@ -142,7 +142,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5027372471824457797}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -283,7 +283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 788b68b263f44fb4c9cf0d8a95820e42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waterLevel: 0
+  waterLevel: 0.3
   buoyancyForce: 20
   waterDrag: 0.5
   waterAngularDrag: 0.8
@@ -641,6 +641,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerVisuals
       objectReference: {fileID: 0}
+    - target: {fileID: 4703785892848081434, guid: 9701725942a643640ada51d247734e1c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9d8365ccb64938f4cb947acff983df1c, type: 2}
     - target: {fileID: 4906174233551786215, guid: 9701725942a643640ada51d247734e1c, type: 3}
       propertyPath: paddleAnimator
       value: 
@@ -649,6 +653,10 @@ PrefabInstance:
       propertyPath: paddleAnimator
       value: 
       objectReference: {fileID: 6140395550330606533}
+    - target: {fileID: 6796077746435610470, guid: 9701725942a643640ada51d247734e1c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 334b672d67ec23c4c82fee95d0c022b2, type: 2}
     - target: {fileID: 8249584265011126575, guid: 9701725942a643640ada51d247734e1c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

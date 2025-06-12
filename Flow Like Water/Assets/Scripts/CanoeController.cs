@@ -54,7 +54,7 @@ public class CanoeController : MonoBehaviour
 
     private void Start()
     {
-        stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.FallSpeed;
+        stateDelayTime = rhythmInputSystem.spawnDistance / PromptObject.FallSpeed - 0.5f;
         rotationSpeed = canoeParams.regRotationSpeed;
         _currentTarget = points[0].position;
     }
@@ -216,6 +216,13 @@ public class CanoeController : MonoBehaviour
         {
             Gizmos.color = (i == currentPointIndex) ? Color.red : Color.yellow;
             Gizmos.DrawWireSphere(points[i].position, 0.5f);
+
+            
+            if (i == 0)
+                continue;
+            
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(points[i].position, points[i - 1].position);
         }
         
         // Draw arrival radius around current target

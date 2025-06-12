@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037b707aba26ec84ab6c444296154dfe, type: 3}
   m_Name: CanoeParams
   m_EditorClassIdentifier: 
-  regRotationSpeed: 5
+  regRotationSpeed: 3
   turnRotationSpeed: 20

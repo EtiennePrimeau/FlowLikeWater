@@ -48,10 +48,11 @@ public class PromptObject : MonoBehaviour
             Destroy(gameObject);
         }
         
-        float t = timer / CanoeController.Instance.stateDelayTime;
+        float t = timer / (CanoeController.Instance.stateDelayTime + 0.5f);
         if (t > 1)
         {
             Destroy(text);
+            Debug.Log("Destroy");
             return;
         }
         
