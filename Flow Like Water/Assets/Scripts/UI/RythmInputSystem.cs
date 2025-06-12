@@ -105,15 +105,15 @@ public class RhythmInputSystem : MonoBehaviour
     {
         if (canoe.DelayedState == ECanoeState.hardTurning)
         {
-            CheckHardTurnInput(KeyCode.Z, KeyCode.P, EInputType.LeftHard);
-            CheckHardTurnInput(KeyCode.C, KeyCode.I, EInputType.RightHard);
+            CheckHardTurnInput(KeyCode.V, KeyCode.U, EInputType.LeftHard);
+            CheckHardTurnInput(KeyCode.N, KeyCode.R, EInputType.RightHard);
             return;
         }
         
-        CheckInputCombination(KeyCode.Z, KeyCode.P, EInputType.StraightLeft);
-        CheckInputCombination(KeyCode.C, KeyCode.I, EInputType.StraightRight);
-        CheckInputCombination(KeyCode.C, KeyCode.P, EInputType.Left);
-        CheckInputCombination(KeyCode.Z, KeyCode.I, EInputType.Right);
+        CheckInputCombination(KeyCode.V, KeyCode.U, EInputType.StraightLeft);
+        CheckInputCombination(KeyCode.N, KeyCode.R, EInputType.StraightRight);
+        CheckInputCombination(KeyCode.V, KeyCode.R, EInputType.Left);
+        CheckInputCombination(KeyCode.U, KeyCode.N, EInputType.Right);
     }
 
     void CheckInputCombination(KeyCode key1, KeyCode key2, EInputType inputType)
@@ -187,7 +187,7 @@ public class RhythmInputSystem : MonoBehaviour
             Debug.DrawLine(closestPrompt.transform.position, targetPos, Color.magenta, 10f);
             
             EInputType expectedInput = closestPrompt.inputType;
-            //Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
+            Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
 
             if (inputType == expectedInput)
             {

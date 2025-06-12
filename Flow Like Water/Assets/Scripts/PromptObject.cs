@@ -71,28 +71,28 @@ public class PromptObject : MonoBehaviour
         switch (inputType)
         {
             case EInputType.StraightLeft:
-                color = isRight ? backColors[0] : frontColors[1];
-                text.text = !isRight ? "Z" : "P";
+                color = isRight ? frontColors[0] : backColors[0];
+                text.text = !isRight ? "V" : "U";
                 break;
             case EInputType.StraightRight:
-                color = isRight ? backColors[1] : frontColors[0];
-                text.text = !isRight ? "C" : "I";
+                color = isRight ? backColors[0] : frontColors[0];
+                text.text = !isRight ? "R" : "N";
                 break;
             case EInputType.Left:
-                color = isFront ? backColors[1] : frontColors[1];
-                text.text = isFront ? "P" : "C";
+                color = isFront ? backColors[0] : frontColors[0];
+                text.text = isFront ? "U" : "N";
                 break;
             case EInputType.Right:
-                color = isFront ? backColors[0] : frontColors[0];
-                text.text = isFront ? "I" : "Z";
+                color = isFront ? frontColors[0] : backColors[0];
+                text.text = isFront ? "R" : "V";
                 break;
             case EInputType.LeftHard:
-                color = isRight ? backColors[1] : frontColors[0];
-                text.text = !isRight ? "Z" : "P";
+                color = isRight ? frontColors[0] : backColors[0];
+                text.text = !isRight ? "V" : "U";
                 break;
             case EInputType.RightHard:
-                color = isRight ? backColors[0] : frontColors[1];
-                text.text = !isRight ? "I" : "C";
+                color = isRight ? backColors[0] : frontColors[0];
+                text.text = !isRight ? "R" : "N";
                 break;
         }
         
