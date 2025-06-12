@@ -131,8 +131,8 @@ public class RhythmInputSystem : MonoBehaviour
         
         CheckInputCombination(KeyCode.V, KeyCode.U, EInputType.StraightLeft);
         CheckInputCombination(KeyCode.N, KeyCode.R, EInputType.StraightRight);
-        CheckInputCombination(KeyCode.V, KeyCode.R, EInputType.Left);
-        CheckInputCombination(KeyCode.U, KeyCode.N, EInputType.Right);
+        CheckInputCombination(KeyCode.U, KeyCode.N, EInputType.Left);
+        CheckInputCombination(KeyCode.V, KeyCode.R, EInputType.Right);
 
         if (Input.GetKeyDown(KeyCode.V))
             backAnimator.TriggerLeftPaddle();
@@ -201,7 +201,7 @@ public class RhythmInputSystem : MonoBehaviour
         // Find the closest prompt of the right type
         foreach (var promptObj in activePrompts)
         {
-            if (promptObj != null && promptObj.inputType == inputType && promptObj.canBePressed)
+            if (promptObj != null && promptObj.canBePressed)
             {
                 float distance = Vector3.Distance(promptObj.transform.position, targetPos);
                 if (distance < closestDistance)
@@ -220,6 +220,8 @@ public class RhythmInputSystem : MonoBehaviour
             EInputType expectedInput = closestPrompt.inputType;
             Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
 
+            Vector3 defaultPos = CanoeController.Instance.transform.position + CanoeController.Instance.transform.forward * 5f;
+            
             if (inputType == expectedInput)
             {
                 if (closestDistance <= perfectZoneSize)
@@ -232,13 +234,12 @@ public class RhythmInputSystem : MonoBehaviour
                 }
                 else
                 {
-                    rhythmUI.ShowFeedbackPopup(CanoeController.Instance.transform.position,FeedbackType.Bad, closestDistance);
+                    rhythmUI.ShowFeedbackPopup(defaultPos,FeedbackType.Bad, closestDistance);
                 }
             }
             else
             {
-                Vector3 pos = CanoeController.Instance.transform.position + Vector3.up * 2f;
-                rhythmUI.ShowFeedbackPopup(Vector3.zero, FeedbackType.Wrong, 0, "WRONG INPUT");
+                rhythmUI.ShowFeedbackPopup(defaultPos, FeedbackType.Wrong, 0, "WRONG INPUT");
             }
         }
     }
