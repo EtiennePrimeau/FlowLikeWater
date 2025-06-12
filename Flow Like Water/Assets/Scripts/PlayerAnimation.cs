@@ -10,7 +10,10 @@ public class CharacterAnimator : MonoBehaviour
     
     [Header("Animation Parameters")]
     private readonly string TRIGGER_LEFT = "TriggerLeft";
+    private readonly string HOLD_LEFT = "HoldLeft";
+    
     private readonly string TRIGGER_RIGHT = "TriggerRight";
+    private readonly string HOLD_RIGHT = "HoldRight";
     
     
     
@@ -39,6 +42,38 @@ public class CharacterAnimator : MonoBehaviour
             animator.SetTrigger(TRIGGER_RIGHT);
         if (paddleAnimator != null)
             paddleAnimator.SetTrigger(TRIGGER_RIGHT);
+    }
+    
+    public void TriggerLeftHold()
+    {
+        if (animator != null)
+            animator.SetBool(HOLD_LEFT, true);
+        if (paddleAnimator != null)
+            paddleAnimator.SetBool(HOLD_LEFT, true);
+    }
+    
+    public void TriggerRightHold()
+    {
+        if (animator != null)
+            animator.SetBool(HOLD_RIGHT, true);
+        if (paddleAnimator != null)
+            paddleAnimator.SetBool(HOLD_RIGHT, true);
+    }
+    
+    public void TriggerLeftRelease()
+    {
+        if (animator != null)
+            animator.SetBool(HOLD_LEFT, false);
+        if (paddleAnimator != null)
+            paddleAnimator.SetBool(HOLD_LEFT, false);
+    }
+    
+    public void TriggerRightRelease()
+    {
+        if (animator != null)
+            animator.SetBool(HOLD_RIGHT, false);
+        if (paddleAnimator != null)
+            paddleAnimator.SetBool(HOLD_RIGHT, false);
     }
     
     // Optional: Get current animation state

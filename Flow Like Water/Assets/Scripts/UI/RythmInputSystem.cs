@@ -107,10 +107,27 @@ public class RhythmInputSystem : MonoBehaviour
     {
         if (canoe.DelayedState == ECanoeState.hardTurning)
         {
+            if (Input.GetKeyDown(KeyCode.V))
+                backAnimator.TriggerLeftHold();
+            if (Input.GetKeyDown(KeyCode.N))
+                backAnimator.TriggerRightHold();
+            
+            if (Input.GetKeyUp(KeyCode.V))
+                backAnimator.TriggerLeftRelease();
+            if (Input.GetKeyUp(KeyCode.N))
+                backAnimator.TriggerRightRelease();
+            
+            if (Input.GetKeyDown(KeyCode.R))
+                frontAnimator.TriggerLeftPaddle();
+            if (Input.GetKeyDown(KeyCode.U))
+                frontAnimator.TriggerRightPaddle();   
+            
             CheckHardTurnInput(KeyCode.V, KeyCode.U, EInputType.LeftHard);
             CheckHardTurnInput(KeyCode.N, KeyCode.R, EInputType.RightHard);
             return;
         }
+        backAnimator.TriggerLeftRelease();
+        backAnimator.TriggerRightRelease();
         
         CheckInputCombination(KeyCode.V, KeyCode.U, EInputType.StraightLeft);
         CheckInputCombination(KeyCode.N, KeyCode.R, EInputType.StraightRight);
