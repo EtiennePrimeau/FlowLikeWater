@@ -174,8 +174,24 @@ public class RhythmUI : MonoBehaviour
                 break;
         }
     }
+
+    public void ShowPopup()
+    {
+        Transform t = CanoeController.Instance.transform;
+        if (feedbackPopupPrefab == null) return;
+        
+        // Instantiate popup
+        GameObject popupObj = Instantiate(feedbackPopupPrefab, t.position + (t.forward + t.up) * 3f,
+            Quaternion.LookRotation(CanoeController.Instance.transform.forward), promptContainer);
+        FeedbackPopup popup = popupObj.GetComponent<FeedbackPopup>();
+
+        if (popup != null)
+        {
+            popup.Initialize(FeedbackType.Hold, "HOLD IT");
+        }
+    }
     
-        public void ShowFeedbackPopup(Vector3 spawnPosition, FeedbackType type, float distance = 0f, string customMessage = "")
+    public void ShowFeedbackPopup(Vector3 spawnPosition, FeedbackType type, float distance = 0f, string customMessage = "")
     {
         if (feedbackPopupPrefab == null) return;
         

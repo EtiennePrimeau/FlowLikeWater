@@ -174,6 +174,9 @@ public class RhythmInputSystem : MonoBehaviour
         if (Input.GetKeyDown(pressKey))
             keyPressTimes[pressKey] = Time.time;
         
+        if (holdingKey)
+            rhythmUI.ShowPopup();
+        
         if (keyPressTimes.ContainsKey(pressKey) && holdingKey)
         {
             CheckInput(inputType);
