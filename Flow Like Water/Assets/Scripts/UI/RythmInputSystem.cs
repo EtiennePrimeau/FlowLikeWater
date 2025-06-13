@@ -252,7 +252,7 @@ public class RhythmInputSystem : MonoBehaviour
             Debug.DrawLine(closestPrompt.transform.position, targetPos, Color.magenta, 10f);
             
             EInputType expectedInput = closestPrompt.inputType;
-            Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
+            //Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
 
             Vector3 defaultPos = CanoeController.Instance.transform.position + CanoeController.Instance.transform.forward * 5f;
 
@@ -290,7 +290,7 @@ public class RhythmInputSystem : MonoBehaviour
         }
         else
         {
-            Debug.Log(" blocked     " + inputChecked);
+            //Debug.Log(" blocked     " + inputChecked);
         }
     }
 
@@ -328,7 +328,7 @@ public class RhythmInputSystem : MonoBehaviour
             if (prompt.gameObject != null)
             {
                 float distance = Vector3.Distance(prompt1.transform.position, prompt.transform.position);
-                Debug.Log($"Deleting additional prompt. Distance: {distance}, Radius: {radius}");
+                //Debug.Log($"Deleting additional prompt. Distance: {distance}, Radius: {radius}");
                 GameManager.Instance.IncrementPromptsHit();
                 Destroy(prompt.gameObject);
             }
@@ -359,65 +359,14 @@ public class RhythmInputSystem : MonoBehaviour
                 return EInputType.StraightLeft;
         }
     }
-    
     void CleanupPrompts()
     {
-        // Remove null references first (destroyed objects)
+        // Remove null references (destroyed objects)
         int nullCount = activePrompts.RemoveAll(p => p == null);
         if (nullCount > 0)
         {
-            //Debug.Log($"[CleanupPrompts] Removed {nullCount} null prompt references");
-        }
-
-        // Get target zone position for Y-based cleanup
-        Vector3 targetPos = GetTargetZonePosition();
-        float cleanupThreshold = targetPos.y - goodZoneSize;
-    
-        //Debug.Log($"[CleanupPrompts] Target Y: {targetPos.y:F2}, Cleanup threshold: {cleanupThreshold:F2}");
-    
-        // Find prompts that would be removed by Y position
-        List<PromptObject> promptsToRemove = new List<PromptObject>();
-        foreach (PromptObject prompt in activePrompts)
-        {
-            if (prompt != null && prompt.transform.position.y < cleanupThreshold)
-            {
-                promptsToRemove.Add(prompt);
-                //Debug.Log($"[CleanupPrompts] Marking prompt for removal: {prompt.name} at Y={prompt.transform.position.y:F2} (below threshold {cleanupThreshold:F2})");
-            }
-        }
-    
-        // Remove the marked prompts
-        int removedCount = 0;
-        foreach (PromptObject prompt in promptsToRemove)
-        {
-            if (activePrompts.Remove(prompt))
-            {
-                removedCount++;
-                //Debug.Log($"[CleanupPrompts] Removed prompt: {prompt.name} from activePrompts list");
-                // Optionally destroy the GameObject if it's not being destroyed elsewhere
-                // Destroy(prompt);
-            }
-        }
-    
-        if (removedCount > 0)
-        {
-            //Debug.Log($"[CleanupPrompts] Total Y-position cleanup: Removed {removedCount} prompts below Y threshold");
-        }
-        else if (activePrompts.Count > 0)
-        {
-            //Debug.Log($"[CleanupPrompts] No Y-position cleanup needed. {activePrompts.Count} active prompts remain");
+            Debug.Log($"[CleanupPrompts] Removed {nullCount} null prompt references");
         }
     }
 
-    
-    //void CleanupPrompts()
-    //{
-    //    // Remove null references (destroyed objects)
-    //    activePrompts.RemoveAll(p => p == null);
-    //    
-    //    // Remove prompts that have fallen too far
-    //    //Vector3 targetPos = GetTargetZonePosition();
-    //    //activePrompts.RemoveAll(p => p != null && 
-    //    //    p.transform.position.y < targetPos.y - goodZoneSize);
-    //}
 }
