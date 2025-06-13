@@ -188,6 +188,7 @@ public class RhythmUI : MonoBehaviour
         if (popup != null)
         {
             popup.Initialize(FeedbackType.Hold, "HOLD IT");
+            HealthSystem.Instance.OnFeedbackReceived(FeedbackType.Hold);
         }
     }
     
@@ -203,7 +204,7 @@ public class RhythmUI : MonoBehaviour
         if (popup != null)
         {
             // Initialize the popup based on feedback type
-            if (type == FeedbackType.Wrong)
+            if (type == FeedbackType.Wrong ||  type == FeedbackType.Miss)
                 popup.Initialize(type, customMessage);
             else
                 popup.Initialize(type, "", distance);

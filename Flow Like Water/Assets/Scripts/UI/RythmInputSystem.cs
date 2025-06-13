@@ -7,6 +7,8 @@ public enum EInputType { Left, Right, LeftHard, RightHard, StraightLeft, Straigh
 
 public class RhythmInputSystem : MonoBehaviour
 {
+    public static RhythmInputSystem Instance;
+    
     [Header("References")]
     public CanoeController canoe;
     public RhythmUI rhythmUI;
@@ -19,6 +21,7 @@ public class RhythmInputSystem : MonoBehaviour
     public float promptInterval = 0.8f;
     public float perfectZoneSize = 50f;
     public float goodZoneSize = 100f;
+    public float deleteRadius = 10f;
     
     [Header("Input Settings")]
     public float combinationWindow = 0.2f;
@@ -28,7 +31,15 @@ public class RhythmInputSystem : MonoBehaviour
     private float lastPromptTime;
     
     private EInputType expectedStraightInput;
-    
+
+
+    private void Awake()
+    {
+        if (Instance != null)
+            Destroy(Instance.gameObject);
+        Instance = this;
+    }
+
     void Update()
     {
         if (canoe == null) return;
@@ -221,31 +232,84 @@ public class RhythmInputSystem : MonoBehaviour
             Debug.DrawLine(closestPrompt.transform.position, targetPos, Color.magenta, 10f);
             
             EInputType expectedInput = closestPrompt.inputType;
-            Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
+            //Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
 
             Vector3 defaultPos = CanoeController.Instance.transform.position + CanoeController.Instance.transform.forward * 5f;
-            
+
+            FeedbackType feedbackType;
             if (inputType == expectedInput)
             {
                 if (closestDistance <= perfectZoneSize)
                 {
+                    feedbackType = FeedbackType.Perfect;
                     rhythmUI.ShowFeedbackPopup(closestPrompt.transform.position,FeedbackType.Perfect, closestDistance);
+                    DeletePromptsOnSuccess(closestPrompt.transform);
                 }
                 else if (closestDistance <= goodZoneSize)
                 {
+                    feedbackType = FeedbackType.Good;
                     rhythmUI.ShowFeedbackPopup(closestPrompt.transform.position,FeedbackType.Good, closestDistance);
+                    DeletePromptsOnSuccess(closestPrompt.transform);
                 }
                 else
                 {
+                    feedbackType = FeedbackType.Bad;
                     rhythmUI.ShowFeedbackPopup(defaultPos,FeedbackType.Bad, closestDistance);
+                    //DeletePromptsOnSuccess(closestPrompt.transform);
                 }
             }
             else
             {
+                feedbackType = FeedbackType.Wrong;
                 rhythmUI.ShowFeedbackPopup(defaultPos, FeedbackType.Wrong, 0, "WRONG INPUT");
             }
+            
+            HealthSystem.Instance.OnFeedbackReceived(feedbackType);
         }
     }
+
+    void DeletePromptsOnSuccess(Transform prompt1)
+    {
+        // Use OverlapSphere to find all colliders within the delete radius
+        Collider[] nearbyColliders = Physics.OverlapSphere(prompt1.position, deleteRadius);
+    
+        List<PromptObject> promptsToDelete = new List<PromptObject>();
+    
+        // Check each collider for PromptObject component
+        foreach (Collider collider in nearbyColliders)
+        {
+            PromptObject promptObj = collider.GetComponent<PromptObject>();
+            if (promptObj != null && promptObj.canBePressed)
+            {
+                // Check if this prompt is in our active prompts list
+                if (activePrompts.Contains(promptObj))
+                {
+                    promptsToDelete.Add(promptObj);
+                }
+            }
+        }
+    
+        // Delete the found prompts
+        foreach (PromptObject prompt in promptsToDelete)
+        {
+            if (prompt.transform == prompt1)
+                continue;
+            
+            // Remove from active list
+            activePrompts.Remove(prompt);
+        
+            // Destroy the GameObject
+            if (prompt.gameObject != null)
+            {
+                Destroy(prompt.gameObject);
+                Debug.DrawRay(prompt.transform.position, prompt.transform.up * 10f, Color.red, 4f);
+                Debug.Log("Prompt removed from success " + Vector3.Distance(prompt1.transform.position, prompt.transform.position));
+            }
+        }
+        
+        Destroy(prompt1.gameObject);
+    }
+    
     
     // New method to get expected input type based on delayed state
     EInputType GetExpectedInputType()

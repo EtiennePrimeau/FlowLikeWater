@@ -45,6 +45,8 @@ public class PromptObject : MonoBehaviour
         Debug.DrawRay(transform.position, direction, Color.red);
         if (Vector3.Dot(CanoeController.Instance.transform.forward, direction) < dotLimit)
         {
+            RhythmInputSystem.Instance.rhythmUI.ShowFeedbackPopup(transform.position, FeedbackType.Miss, 0, "You missed !");
+            HealthSystem.Instance.OnFeedbackReceived(FeedbackType.Miss);
             Destroy(gameObject);
         }
         
@@ -52,7 +54,6 @@ public class PromptObject : MonoBehaviour
         if (t > 1)
         {
             Destroy(text);
-            Debug.Log("Destroy");
             return;
         }
         

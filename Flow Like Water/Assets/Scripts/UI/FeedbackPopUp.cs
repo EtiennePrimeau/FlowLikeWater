@@ -3,7 +3,7 @@ using TMPro;
 using System.Collections;
 
 
-public enum FeedbackType { Perfect, Good, Bad, Wrong, Hold }
+public enum FeedbackType { Perfect, Good, Bad, Wrong, Hold, Miss }
 
 
 public class FeedbackPopup : MonoBehaviour
@@ -61,6 +61,10 @@ public class FeedbackPopup : MonoBehaviour
             case FeedbackType.Hold:
                 feedbackText.text = message;
                 feedbackText.color = goodColor;
+                break;
+            case FeedbackType.Miss:
+                feedbackText.text = message;
+                feedbackText.color = badColor;
                 break;
         }
     }
