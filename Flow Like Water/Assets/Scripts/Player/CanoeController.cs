@@ -10,7 +10,6 @@ public class CanoeController : MonoBehaviour
     public static CanoeController Instance;
     
     public RhythmInputSystem rhythmInputSystem;
-    public RhythmUI rhythmUI;
     public Transform perfectSpot;
     
     [Header("Waypoints")]
