@@ -275,52 +275,46 @@ public class RhythmInputSystem : MonoBehaviour
     void DeletePromptsOnSuccess(Transform prompt1, bool pressKeys)
     {
         float radius = pressKeys ? deleteRadius : deleteRadius/2;
-            
-        // Use OverlapSphere to find all colliders within the delete radius
-        Collider[] nearbyColliders = Physics.OverlapSphere(prompt1.position, radius);
     
         List<PromptObject> promptsToDelete = new List<PromptObject>();
-    
-        // Check each collider for PromptObject component
-        foreach (Collider collider in nearbyColliders)
+
+        // Check distance to each active prompt directly instead of using Physics
+        foreach (PromptObject promptObj in activePrompts.ToList()) // ToList() to avoid modification during enumeration
         {
-            PromptObject promptObj = collider.GetComponent<PromptObject>();
-            if (promptObj != null && (promptObj.canBePressed == pressKeys))
+            if (promptObj != null && promptObj.canBePressed == pressKeys)
             {
                 if (promptObj.transform == prompt1)
                     continue;
-                
-                // Check if this prompt is in our active prompts list
-                if (activePrompts.Contains(promptObj))
+            
+                float distance = Vector3.Distance(prompt1.position, promptObj.transform.position);
+                //Debug.Log($"Checking prompt {promptObj.name}: distance = {distance}, radius = {radius}");
+            
+                if (distance <= radius)
                 {
                     promptsToDelete.Add(promptObj);
-                    break;
+                    //Debug.Log($"Found prompt to delete within radius: {promptObj.name}");
+                    break; // Only delete one prompt
                 }
             }
         }
-    
+
         // Delete the found prompts
         foreach (PromptObject prompt in promptsToDelete)
         {
-            if (prompt.transform == prompt1)
-                continue;
-            
-            // Remove from active list
             activePrompts.Remove(prompt);
         
-            // Destroy the GameObject
             if (prompt.gameObject != null)
             {
+                float distance = Vector3.Distance(prompt1.transform.position, prompt.transform.position);
+                Debug.Log($"Deleting prompt. Distance: {distance}, Radius: {radius}");
                 Destroy(prompt.gameObject);
-                Debug.DrawLine(prompt.transform.position, prompt1.transform.position, Color.magenta);
-                Debug.Log("Prompt removed from success " + " " + prompt1.name + " " + prompt.name +
-                          " " + Vector3.Distance(prompt1.transform.position, prompt.transform.position));
             }
         }
-        
+    
         if (pressKeys)
             Destroy(prompt1.gameObject);
     }
+
     
     
     // New method to get expected input type based on delayed state
