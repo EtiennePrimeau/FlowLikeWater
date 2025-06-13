@@ -184,9 +184,13 @@ public class RhythmInputSystem : MonoBehaviour
         bool holdingKey = Input.GetKey(holdKey);
         if (Input.GetKeyDown(pressKey))
             keyPressTimes[pressKey] = Time.time;
-        
+
         if (holdingKey)
+        {
             rhythmUI.ShowPopup();
+            DeletePromptsOnSuccess(CanoeController.Instance.transform, false);
+        }
+            
         
         if (keyPressTimes.ContainsKey(pressKey) && holdingKey)
         {
@@ -243,13 +247,13 @@ public class RhythmInputSystem : MonoBehaviour
                 {
                     feedbackType = FeedbackType.Perfect;
                     rhythmUI.ShowFeedbackPopup(closestPrompt.transform.position,FeedbackType.Perfect, closestDistance);
-                    DeletePromptsOnSuccess(closestPrompt.transform);
+                    DeletePromptsOnSuccess(closestPrompt.transform, true);
                 }
                 else if (closestDistance <= goodZoneSize)
                 {
                     feedbackType = FeedbackType.Good;
                     rhythmUI.ShowFeedbackPopup(closestPrompt.transform.position,FeedbackType.Good, closestDistance);
-                    DeletePromptsOnSuccess(closestPrompt.transform);
+                    DeletePromptsOnSuccess(closestPrompt.transform, true);
                 }
                 else
                 {
@@ -268,10 +272,12 @@ public class RhythmInputSystem : MonoBehaviour
         }
     }
 
-    void DeletePromptsOnSuccess(Transform prompt1)
+    void DeletePromptsOnSuccess(Transform prompt1, bool pressKeys)
     {
+        float radius = pressKeys ? deleteRadius : deleteRadius/2;
+            
         // Use OverlapSphere to find all colliders within the delete radius
-        Collider[] nearbyColliders = Physics.OverlapSphere(prompt1.position, deleteRadius);
+        Collider[] nearbyColliders = Physics.OverlapSphere(prompt1.position, radius);
     
         List<PromptObject> promptsToDelete = new List<PromptObject>();
     
@@ -279,12 +285,16 @@ public class RhythmInputSystem : MonoBehaviour
         foreach (Collider collider in nearbyColliders)
         {
             PromptObject promptObj = collider.GetComponent<PromptObject>();
-            if (promptObj != null && promptObj.canBePressed)
+            if (promptObj != null && (promptObj.canBePressed == pressKeys))
             {
+                if (promptObj.transform == prompt1)
+                    continue;
+                
                 // Check if this prompt is in our active prompts list
                 if (activePrompts.Contains(promptObj))
                 {
                     promptsToDelete.Add(promptObj);
+                    break;
                 }
             }
         }
@@ -302,12 +312,14 @@ public class RhythmInputSystem : MonoBehaviour
             if (prompt.gameObject != null)
             {
                 Destroy(prompt.gameObject);
-                Debug.DrawRay(prompt.transform.position, prompt.transform.up * 10f, Color.red, 4f);
-                Debug.Log("Prompt removed from success " + Vector3.Distance(prompt1.transform.position, prompt.transform.position));
+                Debug.DrawLine(prompt.transform.position, prompt1.transform.position, Color.magenta);
+                Debug.Log("Prompt removed from success " + " " + prompt1.name + " " + prompt.name +
+                          " " + Vector3.Distance(prompt1.transform.position, prompt.transform.position));
             }
         }
         
-        Destroy(prompt1.gameObject);
+        if (pressKeys)
+            Destroy(prompt1.gameObject);
     }
     
     

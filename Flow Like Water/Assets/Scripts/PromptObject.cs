@@ -42,7 +42,7 @@ public class PromptObject : MonoBehaviour
         //    Destroy(gameObject);
         
         Vector3 direction = (transform.position - CanoeController.Instance.transform.position).normalized;
-        Debug.DrawRay(transform.position, direction, Color.red);
+        //Debug.DrawRay(transform.position, direction, Color.red);
         if (Vector3.Dot(CanoeController.Instance.transform.forward, direction) < dotLimit)
         {
             RhythmInputSystem.Instance.rhythmUI.ShowFeedbackPopup(transform.position, FeedbackType.Miss, 0, "You missed !");
