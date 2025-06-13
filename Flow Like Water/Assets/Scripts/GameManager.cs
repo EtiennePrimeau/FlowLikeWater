@@ -20,8 +20,10 @@ public class GameManager : MonoBehaviour
     public KeyCode pauseKey = KeyCode.Escape;
     public bool allowPauseInput = true;
     public GameObject pauseCanva;
+    public GameObject deadCanva;
     public Button backToMenuButton;
     public Button resumeButton;
+    public Button playAgainButton;
     
     // Game session data
     [HideInInspector] public float gameStartTime;
@@ -29,8 +31,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool gameWon = false;
     
     // Pause system events
-    public System.Action OnGamePaused;
-    public System.Action OnGameResumed;
+    public Action OnGamePaused;
+    public Action OnGameResumed;
     
     void Awake()
     {
@@ -41,6 +43,7 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             InitializeGameManager();
             pauseCanva.SetActive(false);
+            deadCanva.SetActive(false);
         }
         else
         {
@@ -52,8 +55,15 @@ public class GameManager : MonoBehaviour
     {
         backToMenuButton.onClick.AddListener(OnBackClicked);
         resumeButton.onClick.AddListener(OnResumeClicked);
+        playAgainButton.onClick.AddListener(OnBackClicked);
+        HealthSystem.OnHealthMinReached += OnHealthMin;
     }
-
+    
+    private void OnDisable()
+    {
+        HealthSystem.OnHealthMinReached -= OnHealthMin;
+    }
+    
     void Update()
     {
         // Handle pause input
@@ -119,11 +129,12 @@ public class GameManager : MonoBehaviour
     public void EndGame(bool won = false, int finalScore = 0)
     {
         currentState = GameState.GameOver;
-        gameWon = won;
-        score = finalScore;
-        isPaused = false;
+        //gameWon = won;
+        //score = finalScore;
+        //isPaused = false;
+        Debug.Log("End game");
         
-        // Resume time for game over screen
+        deadCanva.SetActive(true);
         Time.timeScale = 1f;
     }
     
@@ -196,12 +207,18 @@ public class GameManager : MonoBehaviour
     void OnBackClicked()
     {
         pauseCanva.SetActive(false);
+        deadCanva.SetActive(false);
         ReturnToMenu();
     }
     
     void OnResumeClicked()
     {
         ResumeGame();
+    }
+
+    void OnHealthMin()
+    {
+        EndGame();
     }
 }
 

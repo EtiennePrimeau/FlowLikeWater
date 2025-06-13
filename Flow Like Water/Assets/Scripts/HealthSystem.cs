@@ -21,7 +21,7 @@ public class HealthSystem : MonoBehaviour
     [Header("Events")]
     public UnityEvent<float> OnHealthChanged;
     public UnityEvent<float> OnHealthPercentageChanged;
-    public UnityEvent OnHealthMinReached;
+    public static Action OnHealthMinReached;
     public UnityEvent OnHealthMaxReached;
     
     public float CurrentHealth => currentHealth;
@@ -70,9 +70,13 @@ public class HealthSystem : MonoBehaviour
         if (Mathf.Abs(currentHealth - previousHealth) > 0.01f)
         {
             NotifyHealthChanged();
-            
+
             if (IsAtMinHealth && previousHealth > minHealth)
+            {
                 OnHealthMinReached?.Invoke();
+                Debug.Log("Min Health Reached");
+            }
+                
             else if (IsAtMaxHealth && previousHealth < maxHealth)
                 OnHealthMaxReached?.Invoke();
         }
