@@ -152,6 +152,7 @@ public class CanoeController : MonoBehaviour
         if (currentPointIndex >= points.Count)
         {
             currentPointIndex = 0; // Loop back to start
+            GameManager.Instance.LevelCompleted();
         }
     }
 

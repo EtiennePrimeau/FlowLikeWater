@@ -48,6 +48,9 @@ public class RhythmInputSystem : MonoBehaviour
     {
         if (canoe == null) return;
 
+        if (GameManager.Instance.currentState == GameState.GameOver)
+            return;
+
         if (inputChecked)
         {
             if (inputCheckTimer > inputCheckTimerMax)

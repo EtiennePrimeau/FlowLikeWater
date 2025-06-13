@@ -21,7 +21,10 @@ public class GameManager : MonoBehaviour
     public bool allowPauseInput = true;
     public GameObject pauseCanva;
     public GameObject deadCanva;
+    public GameObject endCanva;
+    public FinishUI finishUI;
     public Button backToMenuButton;
+    public Button backToMenuButton2;
     public Button resumeButton;
     public Button playAgainButton;
     
@@ -46,6 +49,7 @@ public class GameManager : MonoBehaviour
             InitializeGameManager();
             pauseCanva.SetActive(false);
             deadCanva.SetActive(false);
+            endCanva.SetActive(false);
         }
         else
         {
@@ -56,6 +60,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         backToMenuButton.onClick.AddListener(OnBackClicked);
+        backToMenuButton2.onClick.AddListener(OnBackClicked);
         resumeButton.onClick.AddListener(OnResumeClicked);
         playAgainButton.onClick.AddListener(OnBackClicked);
         HealthSystem.OnHealthMinReached += OnHealthMin;
@@ -152,6 +157,17 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
     
+    public void LevelCompleted()
+    {
+        currentState = GameState.GameOver;
+        //Debug.Log("Level Completed!");
+    
+        finishUI.SetScore();
+        
+        endCanva.SetActive(true);
+        Time.timeScale = 1f;
+    }    
+    
     // PAUSE SYSTEM METHODS
     
     public void TogglePause()
@@ -192,26 +208,11 @@ public class GameManager : MonoBehaviour
         OnGameResumed?.Invoke();
     }
     
-    // Helper methods for other scripts
-    public float GetGameTime()
-    {
-        return currentState == GameState.Playing ? Time.time - gameStartTime : 0f;
-    }
-    
-    public bool IsGameActive()
-    {
-        return currentState == GameState.Playing && !isPaused;
-    }
-    
-    public bool IsGamePaused()
-    {
-        return isPaused;
-    }
-
     void OnBackClicked()
     {
         pauseCanva.SetActive(false);
         deadCanva.SetActive(false);
+        endCanva.SetActive(false);
         ReturnToMenu();
     }
     
