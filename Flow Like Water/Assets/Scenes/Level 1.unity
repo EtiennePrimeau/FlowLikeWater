@@ -346,6 +346,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 152721056}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &176583416 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2600441490099791748, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
+  m_PrefabInstance: {fileID: 2386565690987587884}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &295116076
 GameObject:
   m_ObjectHideFlags: 0
@@ -941,6 +946,53 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -20.1, y: 0, z: 180.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &800355985
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 800355987}
+  - component: {fileID: 800355986}
+  m_Layer: 0
+  m_Name: RhythmUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &800355986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800355985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054734ccac3f31a43965cedadda42eff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  promptContainer: {fileID: 176583416}
+  promptPrefab: {fileID: 3892565828220613693, guid: 5ded6ec623a3f474a82ee9eaddde519f, type: 3}
+  feedbackPopupPrefab: {fileID: 7324452436783336315, guid: 24be0b264cd9629409d61447fdb40a1c, type: 3}
+--- !u!4 &800355987
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800355985}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1824,17 +1876,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1639923149}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1726198652 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7305307505293856729, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
-  m_PrefabInstance: {fileID: 2386565690987587884}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 054734ccac3f31a43965cedadda42eff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1789926163
 GameObject:
   m_ObjectHideFlags: 0
@@ -2629,6 +2670,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 938317221796869976, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
+      propertyPath: rhythmUI
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 938317221796869976, guid: 893ed42b81d89564c8057deff6b007cf, type: 3}
       propertyPath: rhythmInputSystem
       value: 
       objectReference: {fileID: 1286811651}
@@ -2720,7 +2765,7 @@ PrefabInstance:
     - target: {fileID: 4683994679612889640, guid: 0928a4bb440ece54a94e5f5d48130955, type: 3}
       propertyPath: rhythmUI
       value: 
-      objectReference: {fileID: 1726198652}
+      objectReference: {fileID: 0}
     - target: {fileID: 4683994679612889640, guid: 0928a4bb440ece54a94e5f5d48130955, type: 3}
       propertyPath: perfectSpot
       value: 
@@ -3041,3 +3086,4 @@ SceneRoots:
   - {fileID: 1789926164}
   - {fileID: 3681756135426674930}
   - {fileID: 1329128341}
+  - {fileID: 800355987}

@@ -11,17 +11,10 @@ public class RhythmUI : MonoBehaviour
     public Transform promptContainer;
     public GameObject promptPrefab;
     public GameObject feedbackPopupPrefab;
-    public TextMeshProUGUI feedbackText;
-
-    //public float fallSpeed;
     
     private float lastSpawnTimeHold;
     
     
-    private void Start()
-    {
-        //fallSpeed = promptPrefab.GetComponent<PromptObject>().GetSpeed();
-    }
 
     public List<PromptObject> ShowPromptHardTurn(EInputType inputType, Vector3 spawnPos, Vector3 targetPos, 
         float lastPromptTime, float promptInterval, out bool pressKeyCreated)
@@ -39,7 +32,6 @@ public class RhythmUI : MonoBehaviour
             prompts.Add(prompt1);
             lastSpawnTimeHold = Time.time;
         }
-        
 
         //Debug.Log(Time.time + "  " + lastPromptTime);
         //Debug.Log(Time.time - lastPromptTime);
@@ -140,41 +132,6 @@ public class RhythmUI : MonoBehaviour
         return promptComponent;
     }
     
-    void SetupPromptVisual(GameObject promptObj, EInputType inputType, bool isRight)
-    {
-        var text = promptObj.GetComponent<TextMeshProUGUI>();
-        if (text == null) return;
-        
-        
-        switch (inputType)
-        {
-            case EInputType.StraightLeft:
-                text.text = !isRight ? "Z" : "P";
-                text.color = Color.blue;
-                break;
-            case EInputType.StraightRight:
-                text.text = !isRight ? "C" : "I";
-                text.color = Color.blue;
-                break;
-            case EInputType.Left:
-                text.text = !isRight ? "C" : "P";
-                text.color = Color.green;
-                break;
-            case EInputType.Right:
-                text.text = !isRight ? "Z" : "I";
-                text.color = Color.yellow;
-                break;
-            case EInputType.LeftHard:
-                text.text = !isRight ? "Z" : "P";
-                text.color = Color.red;
-                break;
-            case EInputType.RightHard:
-                text.text = !isRight ? "I" : "C";
-                text.color = Color.red;
-                break;
-        }
-    }
-
     public void ShowPopup()
     {
         Transform t = CanoeController.Instance.transform;
@@ -209,22 +166,5 @@ public class RhythmUI : MonoBehaviour
             else
                 popup.Initialize(type, "", distance);
         }
-    }
-    
-    private float ExtractDistanceFromMessage(string message)
-    {
-        // Extract distance value from messages like "PERFECT! 5.2"
-        string[] parts = message.Split(' ');
-        if (parts.Length > 1 && float.TryParse(parts[1], out float distance))
-            return distance;
-        return 0f;
-    }
-    
-    IEnumerator ShowFeedbackCoroutine(string message)
-    {
-        feedbackText.text = message;
-        feedbackText.gameObject.SetActive(true);
-        yield return new WaitForSeconds(0.8f);
-        feedbackText.gameObject.SetActive(false);
     }
 }
