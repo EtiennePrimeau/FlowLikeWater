@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public float gameStartTime;
     [HideInInspector] public int score = 0;
     [HideInInspector] public bool gameWon = false;
+    [HideInInspector] public int promptsHit = 0;
+    [HideInInspector] public int promptsMissed = 0;
     
     // Pause system events
     public Action OnGamePaused;
@@ -101,6 +103,8 @@ public class GameManager : MonoBehaviour
         score = 0;
         gameWon = false;
         isPaused = false;
+        promptsHit = 0;
+        promptsMissed = 0;
         
         // Ensure time is running normally
         Time.timeScale = 1f;
@@ -219,6 +223,20 @@ public class GameManager : MonoBehaviour
     void OnHealthMin()
     {
         EndGame();
+    }
+    
+    public void IncrementPromptsHit()
+    {
+        promptsHit++;
+        //Debug.Log($"Prompts Hit: {promptsHit}");
+        GuiDebug.Instance.PrintFloat("Prompts hit", promptsHit);
+    }
+
+    public void IncrementPromptsMissed()
+    {
+        promptsMissed++;
+        //Debug.Log($"Prompts Missed: {promptsMissed}");
+        GuiDebug.Instance.PrintFloat("Prompts missed", promptsMissed);
     }
 }
 

@@ -47,6 +47,7 @@ public class PromptObject : MonoBehaviour
         {
             RhythmInputSystem.Instance.rhythmUI.ShowFeedbackPopup(transform.position, FeedbackType.Miss, 0, "You missed !");
             HealthSystem.Instance.OnFeedbackReceived(FeedbackType.Miss);
+            GameManager.Instance.IncrementPromptsMissed();
             Destroy(gameObject);
         }
         
