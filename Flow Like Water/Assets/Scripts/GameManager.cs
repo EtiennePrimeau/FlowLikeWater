@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
     
     public void LoadLevel(string sceneName)
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("Level 1");
         return;
         
         currentState = GameState.Playing;
