@@ -148,6 +148,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f61c4b2b4cdd054a9c4ab8b0d90a408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menuSceneName: MainMenu
+  gameSceneName: Game
+  gameOverSceneName: 
+  currentState: 0
+  gameStartTime: 0
+  score: 0
+  gameWon: 0
 --- !u!4 &1407332525
 Transform:
   m_ObjectHideFlags: 0

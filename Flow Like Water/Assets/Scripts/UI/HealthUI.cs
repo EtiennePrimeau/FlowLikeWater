@@ -97,7 +97,7 @@ public class HealthBarUI : MonoBehaviour
     {
         if (indicatorImage != null)
         {
-            indicatorImage.color = healthColorGradient.Evaluate(percentage);
+            //indicatorImage.color = healthColorGradient.Evaluate(percentage);
         }
     }
     
