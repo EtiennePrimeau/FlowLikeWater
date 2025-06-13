@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,6 +19,9 @@ public class GameManager : MonoBehaviour
     [Header("Pause Settings")]
     public KeyCode pauseKey = KeyCode.Escape;
     public bool allowPauseInput = true;
+    public GameObject pauseCanva;
+    public Button backToMenuButton;
+    public Button resumeButton;
     
     // Game session data
     [HideInInspector] public float gameStartTime;
@@ -35,13 +40,20 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             InitializeGameManager();
+            pauseCanva.SetActive(false);
         }
         else
         {
             Destroy(gameObject);
         }
     }
-    
+
+    private void Start()
+    {
+        backToMenuButton.onClick.AddListener(OnBackClicked);
+        resumeButton.onClick.AddListener(OnResumeClicked);
+    }
+
     void Update()
     {
         // Handle pause input
@@ -145,6 +157,7 @@ public class GameManager : MonoBehaviour
     {
         if (currentState != GameState.Playing) return;
         
+        pauseCanva.SetActive(true);
         isPaused = true;
         Time.timeScale = 0f;
         
@@ -158,8 +171,9 @@ public class GameManager : MonoBehaviour
         
         isPaused = false;
         Time.timeScale = 1f;
+        pauseCanva.SetActive(false);
         
-        Debug.Log("Game Resumed");
+        //Debug.Log("Game Resumed");
         OnGameResumed?.Invoke();
     }
     
@@ -177,6 +191,17 @@ public class GameManager : MonoBehaviour
     public bool IsGamePaused()
     {
         return isPaused;
+    }
+
+    void OnBackClicked()
+    {
+        pauseCanva.SetActive(false);
+        ReturnToMenu();
+    }
+    
+    void OnResumeClicked()
+    {
+        ResumeGame();
     }
 }
 
