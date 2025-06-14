@@ -102,7 +102,7 @@ public class PromptObject : MonoBehaviour
         float currentIntensity = Mathf.Lerp(minIntensity, maxIntensity, progress);
         
         // Add flash effect when very close (last 20% of journey)
-        if (progress > 0.97f)
+        if (progress > 0.95f)
         {
             // Create pulsing effect in the final approach
             float flashProgress = (progress - 0.8f) / 0.2f; // 0 to 1 in the last 20%
