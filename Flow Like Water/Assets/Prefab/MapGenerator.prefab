@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1029392406216105511
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3531948247224193214}
+  - component: {fileID: 559982336972590542}
+  m_Layer: 0
+  m_Name: MapGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3531948247224193214
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029392406216105511}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 26.4, y: 8.64, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &559982336972590542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029392406216105511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667bba704687c4f44a2f5bf8b001e741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabsToSpawn:
+  - {fileID: 7927004175625182675, guid: 8848d7855c3f27a40b7a5b2f9d62914a, type: 3}
+  - {fileID: 4094901744090826304, guid: 89ee07a5721fbb349801d6f438e2d681, type: 3}
+  - {fileID: 615487250319281297, guid: a0306d04b8516ae4faf400ffafc3f773, type: 3}
+  - {fileID: 7644974408324928086, guid: 7b06c0b014434fc4e98f294723e2eaf0, type: 3}
+  zoneCenter: {x: 0, y: 0, z: 0}
+  zoneSize: {x: 17.23027, y: 1, z: 30.72277}
+  objectCount: 50
+  minSpacing: 0
+  avoidOverlap: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  zoneColor: {r: 0, g: 1, b: 0, a: 0.3}
+  wireframeColor: {r: 0, g: 1, b: 0, a: 1}
+  useRandomColors: 1
+  useRandomIntensity: 1
+  minIntensity: 0.5
+  maxIntensity: 2
+  colorPalette:
+  - {r: 0.16724937, g: 0.6037736, b: 0.054111768, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0.35617658, g: 0.8679245, b: 0.5134176, a: 1}
+  - {r: 0.5943396, g: 0.4594886, b: 0.047659315, a: 1}
+  - {r: 0.32500792, g: 0.5283019, b: 0.14204343, a: 1}
+  - {r: 0.07513549, g: 0.2735849, b: 0.050329305, a: 1}
+  - {r: 0.13222758, g: 0.3773585, b: 0.10145959, a: 1}
+  alignToGround: 1
+  randomYRotation: 1
+  upDirection: {x: 0, y: 1, z: 0}
