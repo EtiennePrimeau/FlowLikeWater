@@ -4,7 +4,8 @@ using System.Collections.Generic;
 public class FishManager : MonoBehaviour
 {
     [Header("Fish Settings")]
-    public GameObject fishPrefab; // Your MandarinFish prefab
+    public List<GameObject> fishPrefabs = new List<GameObject>();
+    
     public int fishCount = 20;
     public float spawnRadius = 15f;
     public float maxDistanceFromPlayer = 25f;
@@ -31,7 +32,8 @@ public class FishManager : MonoBehaviour
         for (int i = 0; i < fishCount; i++)
         {
             Vector3 spawnPos = GetRandomPositionAroundPlayer();
-            GameObject newFish = Instantiate(fishPrefab, spawnPos, Quaternion.identity);
+            GameObject randomFishPrefab = fishPrefabs[Random.Range(0, fishPrefabs.Count)];
+            GameObject newFish = Instantiate(randomFishPrefab, spawnPos, Quaternion.identity);
             
             FishSwimmer swimmer = newFish.GetComponent<FishSwimmer>();
             if (swimmer == null)

@@ -44,7 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ff08f7b2402aa1488a8a0c7c6e77d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fishPrefab: {fileID: 5129605063615737762, guid: e7fcd48213b33644dbfb79449e16514e, type: 3}
+  fishPrefabs:
+  - {fileID: 375645437068925978, guid: 097883b5397e46e4f98a0ce6046c8d99, type: 3}
+  - {fileID: 2429883122725787665, guid: 21e77ec13446eff408e1d1499c313b99, type: 3}
+  - {fileID: 7858753160027159906, guid: cb553ca987231284b8fab877817e41f9, type: 3}
+  - {fileID: 6372285635332734758, guid: c6006899cf323a6458ee71dc4c2f605f, type: 3}
+  - {fileID: 5119444612183122293, guid: 0cd227dcf93f59f4bb5a4756c3ebb9d0, type: 3}
+  - {fileID: 2413382310404488268, guid: 3c2221d267c29ff429fea1efdf82e5d8, type: 3}
+  - {fileID: 8929245926187823348, guid: a2ed8f67f81c87a49a6b77f02b6c64f6, type: 3}
   fishCount: 150
   spawnRadius: 80
   maxDistanceFromPlayer: 60
