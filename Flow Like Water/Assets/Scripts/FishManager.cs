@@ -48,7 +48,7 @@ public class FishManager : MonoBehaviour
         
         Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
         Vector3 spawnPosition = player.position + 
-                                CanoeController.Instance.transform.forward * forwardDistance 
+                                CanoeController.Instance.transform.forward * forwardDistance / 2f 
                                 + new Vector3(randomCircle.x, 0, randomCircle.y);
         
         // Randomize Y position slightly

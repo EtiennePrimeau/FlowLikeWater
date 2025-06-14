@@ -364,12 +364,13 @@ public class RhythmInputSystem : MonoBehaviour
     }
     void CleanupPrompts()
     {
+        
         // Remove null references (destroyed objects)
         int nullCount = activePrompts.RemoveAll(p => p == null);
-        if (nullCount > 0)
-        {
-            Debug.Log($"[CleanupPrompts] Removed {nullCount} null prompt references");
-        }
+        //if (nullCount > 0)
+        //{
+        //    Debug.Log($"[CleanupPrompts] Removed {nullCount} null prompt references");
+        //}
     }
 
 }

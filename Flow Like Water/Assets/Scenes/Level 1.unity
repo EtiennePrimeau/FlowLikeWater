@@ -359,6 +359,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1202589162678863286, guid: 8471877b54d49474a826d00cfdc55f95, type: 3}
+      propertyPath: sineAmplitude
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1202589162678863286, guid: 8471877b54d49474a826d00cfdc55f95, type: 3}
+      propertyPath: sineFrequency
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 1273353611380804481, guid: 8471877b54d49474a826d00cfdc55f95, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
