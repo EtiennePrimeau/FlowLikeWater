@@ -50,6 +50,6 @@ MonoBehaviour:
   maxDistanceFromPlayer: 60
   swimSpeed: 10
   randomMoveStrength: 1
-  sineFrequency: 1
-  sineAmplitude: 0.5
+  sineFrequency: 1.5
+  sineAmplitude: 1
   forwardDistance: 100

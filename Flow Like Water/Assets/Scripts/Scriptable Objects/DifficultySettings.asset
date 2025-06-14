@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c5618ebee27df458dc6f6b38023255, type: 3}
+  m_Name: DifficultySettings
+  m_EditorClassIdentifier: 
+  easy:
+    levelName: 
+    showTextIndicators: 1
+    fallSpeedMultiplier: 0.8
+    animationSpeedMultiplier: 1
+    perfectZoneSize: 50
+    goodZoneSize: 100
+    promptInterval: 2
+  medium:
+    levelName: 
+    showTextIndicators: 0
+    fallSpeedMultiplier: 2
+    animationSpeedMultiplier: 1
+    perfectZoneSize: 15
+    goodZoneSize: 25
+    promptInterval: 1
+  hard:
+    levelName: 
+    showTextIndicators: 0
+    fallSpeedMultiplier: 4
+    animationSpeedMultiplier: 3
+    perfectZoneSize: 5
+    goodZoneSize: 15
+    promptInterval: 0.5

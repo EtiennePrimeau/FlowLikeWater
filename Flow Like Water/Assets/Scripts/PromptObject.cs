@@ -7,10 +7,10 @@ public class PromptObject : MonoBehaviour
 {
     public static float FallSpeed = 15f;
     public static float OffsetStrength = 1f;
+    public static bool ShowTextIndicators = true;
     
     public EInputType inputType;
     public bool canBePressed = true;
-    //public float fallSpeed = 150f;
     public Vector3 targetPosition;
     public float dotLimit = -0.5f;
     
@@ -18,7 +18,6 @@ public class PromptObject : MonoBehaviour
     public List<Color> backColors;
 
     public GameObject text;
-    
     
     private float timer;
     private float maxTimer = 5;
@@ -28,6 +27,9 @@ public class PromptObject : MonoBehaviour
     {
         if (_material == null)
             Debug.LogError("No Material attached to PromptObject");
+        
+        if (text != null)
+            text.SetActive(ShowTextIndicators);
     }
 
     void Update()

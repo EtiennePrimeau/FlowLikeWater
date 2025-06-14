@@ -2465,6 +2465,13 @@ MonoBehaviour:
   level1Scene: Level1
   level2Scene: Level2
   level3Scene: Level3
+  easyButton: {fileID: 1272870573}
+  mediumButton: {fileID: 47333067}
+  hardButton: {fileID: 10409743}
+  easySelectedIndicator: {fileID: 0}
+  mediumSelectedIndicator: {fileID: 0}
+  hardSelectedIndicator: {fileID: 0}
+  difficultySettings: {fileID: 11400000, guid: f71a4538f0cd4034fbbe1e7a35ec6fd8, type: 2}
 --- !u!4 &1215034491
 Transform:
   m_ObjectHideFlags: 0

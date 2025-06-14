@@ -17,15 +17,42 @@ public class CharacterAnimator : MonoBehaviour
     private readonly string TRIGGER_RIGHT = "TriggerRight";
     private readonly string HOLD_RIGHT = "HoldRight";
     
+    [Header("Difficulty Integration")]
+    public float baseAnimationSpeed = 1f;
     
+    private float currentDifficultySpeed = 1f;
+    private float frontCharacterSpeedModifier = 0.9f;
     
     void Start()
     {
         if (animator == null)
             animator = GetComponent<Animator>();
 
+        // Calculate difficulty-based speed
+        ApplyDifficultySpeed();
+    }
+    
+    void ApplyDifficultySpeed()
+    {
+        // Get difficulty speed multiplier
+        DifficultyState.EnsureInitialized();
+        currentDifficultySpeed = baseAnimationSpeed * DifficultyState.GetAnimationSpeedMultiplier();
+        
+        // Apply front character modifier if needed
         if (isFront)
-            animator.speed = 0.9f;
+            currentDifficultySpeed *= frontCharacterSpeedModifier;
+            
+        // Set the base animation speed
+        if (animator != null)
+            animator.speed = currentDifficultySpeed;
+            
+        Debug.Log($"CharacterAnimator speed set to: {currentDifficultySpeed} (Difficulty: {DifficultyState.GetAnimationSpeedMultiplier()}, Front: {isFront})");
+    }
+    
+    // Public method to reapply difficulty (called by DifficultyManager)
+    public void RefreshDifficultySpeed()
+    {
+        ApplyDifficultySpeed();
     }
     
     public void TriggerLeftPaddle()
@@ -82,9 +109,12 @@ public class CharacterAnimator : MonoBehaviour
     
     IEnumerator SetAnimatorSpeedCoroutine(float time, bool isStopping)
     {
-        
         yield return new WaitForSeconds(time);
         
-        animator.speed = isStopping ? 0 : 1;
+        // UPDATED: Use difficulty-based speed instead of hardcoded values
+        if (isStopping)
+            animator.speed = 0; // Still stop completely when needed
+        else
+            animator.speed = currentDifficultySpeed; // Restore difficulty-based speed
     }
 }
