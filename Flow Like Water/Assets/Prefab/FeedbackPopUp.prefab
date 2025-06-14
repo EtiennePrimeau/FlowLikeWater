@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   feedbackText: {fileID: 3388807052537635150}
   canvasGroup: {fileID: 0}
-  lifetime: 2
+  lifetime: 1
   scaleCurve:
     serializedVersion: 2
     m_Curve:
@@ -97,7 +97,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   movementDirection: {x: 0, y: 1, z: 0}
-  movementDistance: 0
+  movementDistance: 2
   perfectColor: {r: 0.7410197, g: 0, b: 1, a: 1}
   goodColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   badColor: {r: 1, g: 0, b: 0, a: 1}
@@ -136,7 +136,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2, y: 2}
+  m_SizeDelta: {x: 3, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &8435495573872795229
 MeshRenderer:
@@ -230,15 +230,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 5.85
+  m_fontSize: 5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 5
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_fontStyle: 17
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0

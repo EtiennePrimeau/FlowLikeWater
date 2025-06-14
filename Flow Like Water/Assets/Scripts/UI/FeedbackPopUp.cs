@@ -30,8 +30,11 @@ public class FeedbackPopup : MonoBehaviour
     
     void Start()
     {
+        Vector3 playerDirection = transform.position - CanoeController.Instance.transform.position;
+        
         startPosition = transform.position;
-        targetPosition = startPosition + movementDirection.normalized * movementDistance;
+        targetPosition = startPosition + movementDirection.normalized * movementDistance +
+                         playerDirection.normalized * movementDistance * 4f;
         
         // Start the animation
         StartCoroutine(AnimatePopup());
@@ -74,7 +77,7 @@ public class FeedbackPopup : MonoBehaviour
         while (timer < lifetime)
         {
             timer += Time.deltaTime;
-            float normalizedTime = Mathf.Max(timer / lifetime, 0.3f);
+            float normalizedTime = Mathf.Max(timer / lifetime, 0.2f);
             
             // Scale animation
             float scaleValue = scaleCurve.Evaluate(normalizedTime);
@@ -86,7 +89,7 @@ public class FeedbackPopup : MonoBehaviour
                 canvasGroup.alpha = fadeValue;
             
             // Movement animation
-            //transform.position = Vector3.Lerp(startPosition, targetPosition, normalizedTime);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, normalizedTime);
             
             yield return null;
         }
