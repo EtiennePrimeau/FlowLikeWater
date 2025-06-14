@@ -161,6 +161,9 @@ MonoBehaviour:
   - {r: 0.5803922, g: 0, b: 1, a: 1}
   - {r: 1, g: 0.8110068, b: 0, a: 0.78431374}
   text: {fileID: 8843312726962797447}
+  minIntensity: 0.1
+  maxIntensity: 4
+  flashIntensity: 15
 --- !u!33 &139768954701102559
 MeshFilter:
   m_ObjectHideFlags: 0

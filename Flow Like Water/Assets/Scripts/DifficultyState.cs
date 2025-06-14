@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class DifficultyState
 {
-    public static EDifficultyLevel CurrentDifficulty { get; private set; } = EDifficultyLevel.Hard;
+    public static EDifficultyLevel CurrentDifficulty { get; private set; } = EDifficultyLevel.Easy;
     public static DifficultySettings.DifficultyLevel CurrentSettings { get; private set; }
     
     private static DifficultySettings _difficultySettings;
