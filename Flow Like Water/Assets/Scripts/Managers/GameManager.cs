@@ -233,6 +233,7 @@ public class GameManager : MonoBehaviour
     public void IncrementPromptsHit()
     {
         promptsHit++;
+        AudioManager.PlaySuccess();
         //Debug.Log($"Prompts Hit: {promptsHit}");
         //GuiDebug.Instance.PrintFloat("Prompts hit", promptsHit);
     }
@@ -240,6 +241,7 @@ public class GameManager : MonoBehaviour
     public void IncrementPromptsMissed()
     {
         promptsMissed++;
+        AudioManager.PlayMiss();
         //Debug.Log($"Prompts Missed: {promptsMissed}");
         //GuiDebug.Instance.PrintFloat("Prompts missed", promptsMissed);
     }

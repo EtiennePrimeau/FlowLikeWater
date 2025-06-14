@@ -1891,6 +1891,169 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &7878360558499794898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1229919588943342868}
+  - component: {fileID: 5237378383878413244}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1229919588943342868
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7878360558499794898}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6072904688806576906}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5237378383878413244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7878360558499794898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a487df12a909e104b8507292630a964a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backgroundTrack:
+    trackName: foret
+    clip: {fileID: 8300000, guid: c6d11ef001657224f8d984259c4eb93d, type: 3}
+    volume: 0.7
+    loop: 1
+    fadeInOnStart: 0
+    fadeInDuration: 2
+    fadeOutDuration: 2
+    randomizeStartTime: 0
+    randomizePitch: 0
+    minPitch: 0.9
+    maxPitch: 1.1
+  playBackgroundOnStart: 1
+  ambientTracks:
+  - trackName: rapide1
+    clip: {fileID: 8300000, guid: dc305e8403e5a9b4f8f5bbbfe8063f5c, type: 3}
+    volume: 1
+    loop: 0
+    fadeInOnStart: 1
+    fadeInDuration: 3
+    fadeOutDuration: 3
+    randomizeStartTime: 0
+    randomizePitch: 0
+    minPitch: 1
+    maxPitch: 1
+  - trackName: rapide2
+    clip: {fileID: 8300000, guid: 5b0dfc2f062e66541927be7295838278, type: 3}
+    volume: 1
+    loop: 0
+    fadeInOnStart: 1
+    fadeInDuration: 3
+    fadeOutDuration: 3
+    randomizeStartTime: 0
+    randomizePitch: 0
+    minPitch: 1
+    maxPitch: 1
+  - trackName: rapide3
+    clip: {fileID: 8300000, guid: 7cc1ad35807be544a9e778355805e267, type: 3}
+    volume: 1
+    loop: 0
+    fadeInOnStart: 1
+    fadeInDuration: 3
+    fadeOutDuration: 3
+    randomizeStartTime: 0
+    randomizePitch: 0
+    minPitch: 0
+    maxPitch: 0
+  - trackName: rapide4
+    clip: {fileID: 8300000, guid: cebacb996bd18884088b0797a6a10f07, type: 3}
+    volume: 0.794
+    loop: 0
+    fadeInOnStart: 1
+    fadeInDuration: 3
+    fadeOutDuration: 3
+    randomizeStartTime: 0
+    randomizePitch: 0
+    minPitch: 1
+    maxPitch: 1
+  maxConcurrentAmbient: 3
+  ambientChangeInterval: 30
+  randomizeAmbientChanges: 1
+  successSound: {fileID: 8300000, guid: 98ce77cf61659734c900f4ae56bad194, type: 3}
+  missSound: {fileID: 8300000, guid: d9c887f05936710409c62db4bc23c38b, type: 3}
+  sfxVolume: 0.2
+  randomizeSfxPitch: 0
+  sfxPitchVariation: 0.99
+  masterVolume: 0.7
+  musicVolume: 0.7
+  ambientVolume: 0.2
+  crossfadeAmbient: 1
+  crossfadeDuration: 3
+  fadeInCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fadeOutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &7927457157420745365
 GameObject:
   m_ObjectHideFlags: 0
@@ -2026,6 +2189,7 @@ Transform:
   - {fileID: 3850116693197579349}
   - {fileID: 7459338520032996831}
   - {fileID: 7078853287647319774}
+  - {fileID: 1229919588943342868}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5056159057867131773
