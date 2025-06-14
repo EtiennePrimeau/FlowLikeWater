@@ -14,6 +14,7 @@ public class FishManager : MonoBehaviour
     public float randomMoveStrength = 1f;
     public float sineFrequency = 1f;
     public float sineAmplitude = 0.5f;
+    public float forwardDistance = 10f;
     
     private Transform player; // The Canoe
     private List<FishSwimmer> fishList = new List<FishSwimmer>();
@@ -46,7 +47,9 @@ public class FishManager : MonoBehaviour
         if (player == null) return Vector3.zero;
         
         Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
-        Vector3 spawnPosition = player.position + new Vector3(randomCircle.x, 0, randomCircle.y);
+        Vector3 spawnPosition = player.position + 
+                                CanoeController.Instance.transform.forward * forwardDistance 
+                                + new Vector3(randomCircle.x, 0, randomCircle.y);
         
         // Randomize Y position slightly
         spawnPosition.y = player.position.y + Random.Range(-2f, 0.5f);

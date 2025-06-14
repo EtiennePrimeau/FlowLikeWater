@@ -46,7 +46,7 @@ public class HealthBarUI : MonoBehaviour
         OnHealthPercentageChanged(healthSystem.HealthPercentage);
         
         panelHeight = canvaTransform.sizeDelta.y;
-        Debug.Log(panelHeight);
+        //Debug.Log(panelHeight);
     }
     
     private void Update()

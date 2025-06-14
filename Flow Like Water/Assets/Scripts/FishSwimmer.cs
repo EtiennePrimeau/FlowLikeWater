@@ -50,7 +50,9 @@ public class FishSwimmer : MonoBehaviour
     void MoveRandomly()
     {
         // Move in random direction with some tendency to stay near player
-        Vector3 toPlayer = (player.position - transform.position).normalized;
+        Vector3 toPlayer = (player.position + 
+            CanoeController.Instance.transform.forward * manager.forwardDistance -
+            transform.position).normalized;
         Vector3 moveDirection = Vector3.Lerp(randomDirection, toPlayer, 0.3f);
         
         transform.position += moveDirection * manager.swimSpeed * individualSpeed * Time.deltaTime;

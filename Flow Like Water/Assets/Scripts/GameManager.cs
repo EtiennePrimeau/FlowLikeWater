@@ -119,6 +119,10 @@ public class GameManager : MonoBehaviour
     
     public void LoadLevel(string sceneName)
     {
+        promptsHit = 0;
+        promptsMissed = 0;
+        currentState = GameState.Playing;
+        
         SceneManager.LoadScene("Level 1");
         return;
         
@@ -192,7 +196,7 @@ public class GameManager : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
         
-        Debug.Log("Game Paused");
+        //Debug.Log("Game Paused");
         OnGamePaused?.Invoke();
     }
     
