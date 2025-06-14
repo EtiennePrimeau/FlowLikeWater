@@ -230,14 +230,14 @@ public class GameManager : MonoBehaviour
     {
         promptsHit++;
         //Debug.Log($"Prompts Hit: {promptsHit}");
-        GuiDebug.Instance.PrintFloat("Prompts hit", promptsHit);
+        //GuiDebug.Instance.PrintFloat("Prompts hit", promptsHit);
     }
 
     public void IncrementPromptsMissed()
     {
         promptsMissed++;
         //Debug.Log($"Prompts Missed: {promptsMissed}");
-        GuiDebug.Instance.PrintFloat("Prompts missed", promptsMissed);
+        //GuiDebug.Instance.PrintFloat("Prompts missed", promptsMissed);
     }
 }
 

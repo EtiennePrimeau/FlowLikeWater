@@ -78,8 +78,8 @@ public class CanoeController : MonoBehaviour
         }
         
         //GuiDebug.Instance.PrintFloat("rotationDirection", rotationDirection);
-        GuiDebug.Instance.PrintString("canoe state", canoeState.ToString());
-        GuiDebug.Instance.PrintString("delayed state", delayedState.ToString());
+        //GuiDebug.Instance.PrintString("canoe state", canoeState.ToString());
+        //GuiDebug.Instance.PrintString("delayed state", delayedState.ToString());
     }
     
     void CalculateRotationAlignment(Vector3 target)
@@ -113,7 +113,7 @@ public class CanoeController : MonoBehaviour
     void SetCurrentState()
     {
         //GuiDebug.Instance.PrintString("state", canoeState.ToString());
-        GuiDebug.Instance.PrintFloat("rot dir", rotationDirection);
+        //GuiDebug.Instance.PrintFloat("rot dir", rotationDirection);
         
         if (rotationDirection > straightThreshold)
         {
@@ -165,7 +165,7 @@ public class CanoeController : MonoBehaviour
             canoeState = newState;
             
             StartCoroutine(ChangeDelayedState());
-            GuiDebug.Instance.PrintFloat("rot speed", rotationSpeed);
+            //GuiDebug.Instance.PrintFloat("rot speed", rotationSpeed);
                         
         }
     }

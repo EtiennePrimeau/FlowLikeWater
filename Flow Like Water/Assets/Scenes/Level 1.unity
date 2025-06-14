@@ -2993,6 +2993,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5486106833957316746, guid: 99c0b8ca95d80ca44baf058038c2ca21, type: 3}
+      propertyPath: m_Antialiasing
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5486106833957316746, guid: 99c0b8ca95d80ca44baf058038c2ca21, type: 3}
+      propertyPath: m_RenderPostProcessing
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5652848809387754486, guid: 99c0b8ca95d80ca44baf058038c2ca21, type: 3}
       propertyPath: m_Name
       value: Main Camera

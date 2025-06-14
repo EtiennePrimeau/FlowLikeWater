@@ -251,8 +251,8 @@ public class RhythmInputSystem : MonoBehaviour
         if (!inputChecked && closestPrompt != null)
         {
             inputChecked = true;
-            GuiDebug.Instance.PrintFloat("distance", closestDistance);
-            Debug.DrawLine(closestPrompt.transform.position, targetPos, Color.magenta, 10f);
+            //GuiDebug.Instance.PrintFloat("distance", closestDistance);
+            //Debug.DrawLine(closestPrompt.transform.position, targetPos, Color.magenta, 10f);
             
             EInputType expectedInput = closestPrompt.inputType;
             //Debug.Log($"Player Input: {inputType}, Prompt Expected: {expectedInput}, Match: {inputType == expectedInput}");
